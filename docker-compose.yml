@@ -16,7 +16,7 @@ services:
     networks:
       - base-net
     volumes:
-      - ./data/oracle:/opt/oracle/oradata
+      - oracle-data:/opt/oracle/oradata
     healthcheck:
       test: ['CMD', 'lsnrctl', 'status']
       interval: 15s
@@ -68,3 +68,6 @@ services:
       db:
         condition: service_healthy
     restart: always
+
+volumes:
+  oracle-data:
