@@ -24,6 +24,23 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private static final String[] SWAGGER_URL = {
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/webjars/**",
+            "/swagger-resources/**",
+            "/api/v1/v3/api-docs/**",
+            "/api/v1/v3/api-docs",
+            "/api/v1/api-docs/**",
+            "/api/v1/api-docs"
+    };
+
+    private static final String[] PUBLIC_URL = {
+            "/api/v1/auth/**",
+            "/api/v1/user/**"
+    };
+
     private final AuthEntryPointJwt unauthorizedHandler;
 
     private final RoleAccessHandler roleAccessHandler;
@@ -81,9 +98,10 @@ public class SecurityConfig {
 
     private void configAuth(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry config) {
         config
-                .requestMatchers("/api/v1/auth/**")
+
+                .requestMatchers(SWAGGER_URL)
                 .permitAll()
-                .requestMatchers("/api/v1/user/**")
+                .requestMatchers(PUBLIC_URL)
                 .permitAll()
                 .anyRequest()
                 .authenticated();
