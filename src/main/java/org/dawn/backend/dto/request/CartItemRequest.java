@@ -9,7 +9,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class CartItem {
+public class CartItemRequest {
     private Long productId;
 
     private Integer quantity;

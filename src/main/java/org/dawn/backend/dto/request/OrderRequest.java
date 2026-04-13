@@ -16,5 +16,5 @@ public class OrderRequest {
 
     private String customerPhone;
 
-    private List<CartItem> items;
+    private List<CartItemRequest> items;
 }
