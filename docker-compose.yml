@@ -6,7 +6,7 @@ services:
   # Server
   db:
     container_name: oracle-db
-    image: gvenzl/oracle-xe:latest
+    image: gvenzl/oracle-xe:21-slim
     environment:
       ORACLE_PASSWORD: ${ORACLE_PASSWORD}
       APP_USER: ${SPRING_DATASOURCE_USERNAME}
