@@ -1,9 +1,10 @@
 package org.dawn.backend.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.config.response.ResponseObject;
 import org.dawn.backend.dto.request.ImportImeiRequest;
 import org.dawn.backend.dto.request.ProductRequest;
-import org.dawn.backend.entity.Product;
+import org.dawn.backend.dto.response.ProductResponse;
 import org.dawn.backend.service.WarehouseService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,10 +19,15 @@ public class WarehouseController {
 
     @PostMapping("/products")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> addProduct(@RequestBody ProductRequest p) {
-        return ResponseEntity.ok(warehouseService.create(p));
+    public ResponseObject<ProductResponse> addProduct(@RequestBody ProductRequest p) {
+        return ResponseObject.success(warehouseService.create(p));
     }
 
+    @PutMapping("/products/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseObject<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody ProductRequest p) {
+        return ResponseObject.success(warehouseService.updateProduct(id, p));
+    }
 
     @PostMapping("/stock/import")
     @PreAuthorize("hasRole('STOCK') or hasRole('ADMIN')")
