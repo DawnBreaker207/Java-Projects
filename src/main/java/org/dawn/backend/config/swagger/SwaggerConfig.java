@@ -33,7 +33,7 @@ public class SwaggerConfig {
 
         ExternalDocumentation doc = new ExternalDocumentation()
                 .description("You can refer to Wiki Documentation")
-                .url("https://booking-ticket-dummy-url.com/docs");
+                .url("https://java-dummy-url.com/docs");
 
         Info info = new Info()
                 .title("Base")

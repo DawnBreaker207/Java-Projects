@@ -7,6 +7,8 @@ springdoc:
   api-docs:
     path: /api-docs
 spring:
+  config:
+    import: "optional:file:.env[.properties]"
   application:
     name: backend
   # Database config
