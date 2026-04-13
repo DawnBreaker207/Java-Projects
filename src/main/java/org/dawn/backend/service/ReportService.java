@@ -1,9 +1,11 @@
 package org.dawn.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.dto.response.ProductResponse;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.entity.ProductItem;
 import org.dawn.backend.entity.StockMovement;
+import org.dawn.backend.helper.ProductMappingHelper;
 import org.dawn.backend.repository.ProductItemRepository;
 import org.dawn.backend.repository.ProductRepository;
 import org.dawn.backend.repository.StockMovementRepository;
@@ -23,11 +25,12 @@ public class ReportService {
     private final StockMovementRepository movementRepository;
 
 
-    public List<Product> getLowStockAlerts() {
+    public List<ProductResponse> getLowStockAlerts() {
         return productRepository
                 .findAll()
                 .stream()
                 .filter(p -> p.getCurrentStock() <= p.getMinThreshold())
+                .map(ProductMappingHelper::map)
                 .toList();
     }
 

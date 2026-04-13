@@ -27,6 +27,8 @@ public interface ProductMappingHelper {
                 .currentStock(req.getCurrentStock())
                 .minThreshold(req.getMinThreshold())
                 .status(req.getStatus())
+                .createdAt(req.getCreatedAt())
+                .updatedAt(req.getUpdatedAt())
                 .build();
     }
 }

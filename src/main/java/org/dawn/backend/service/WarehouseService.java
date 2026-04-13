@@ -7,6 +7,7 @@ import org.dawn.backend.config.response.ResponsePage;
 import org.dawn.backend.constant.ItemStatus;
 import org.dawn.backend.constant.Message;
 import org.dawn.backend.constant.MovementType;
+import org.dawn.backend.constant.ProductStatus;
 import org.dawn.backend.dto.request.ProductRequest;
 import org.dawn.backend.dto.response.ProductResponse;
 import org.dawn.backend.entity.Product;
@@ -56,6 +57,7 @@ public class WarehouseService {
     @Loggable(action = "CREATE_PRODUCT", entity = "PRODUCT")
     public ProductResponse create(ProductRequest req) {
         Product product = productRepository.save(ProductMappingHelper.map(req));
+        product.setStatus(ProductStatus.INACTIVE);
         return ProductMappingHelper.map(product);
     }
 
