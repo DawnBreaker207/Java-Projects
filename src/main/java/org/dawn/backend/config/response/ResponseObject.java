@@ -1,53 +1,44 @@
 package org.dawn.backend.config.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import lombok.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public class ResponseObject<T> extends ResponseEntity<ResponseObject.Payload<T>> {
+import java.time.ZonedDateTime;
 
-    public ResponseObject(HttpStatusCode code, String message, T data) {
-        super(new Payload<>(code.value(), message, data), code);
-    }
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ResponseObject<T> {
 
-    public ResponseObject(HttpStatusCode code, String message, T data, HttpHeaders headers) {
-        super(new Payload<>(code.value(), message, data), headers, code);
-    }
+    private int code;
 
-    private ResponseObject(HttpStatusCode code) {
-        super(code);
-    }
+    private String message;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private T data;
+
+
+    @Builder.Default
+    private String timeStamp = ZonedDateTime.now().toString();
+
 
     public static <T> ResponseObject<T> success(T data) {
-        return new ResponseObject<>(HttpStatus.OK, "Success", data);
+        return ResponseObject.<T>builder().code(200).message("Success").data(data).build();
     }
 
     public static <T> ResponseObject<T> success(T data, String message) {
-        return new ResponseObject<>(HttpStatus.OK, message, data);
+        return ResponseObject.<T>builder().code(200).message(message).data(data).build();
     }
 
     public static <T> ResponseObject<T> created(T data) {
-        return new ResponseObject<>(HttpStatus.CREATED, "Created Successfully", data);
+        return ResponseObject.<T>builder().code(201).message("Created Successfully").data(data).build();
     }
 
-    public static <T> ResponseObject<T> deleted() {
-        return new ResponseObject<>(HttpStatus.NO_CONTENT);
-    }
-
-    public static <T> ResponseObject<T> error(HttpStatus code, String message) {
-        return new ResponseObject<>(code, message, null);
-    }
-
-    @Value
-    public static class Payload<T> {
-        int code;
-
-        String message;
-
-        @JsonInclude(JsonInclude.Include.NON_NULL)
-        T data;
+    public static <T> ResponseObject<T> error(int code, String message) {
+        return ResponseObject.<T>builder().code(code).message(message).build();
     }
 }
