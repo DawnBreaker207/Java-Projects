@@ -18,7 +18,7 @@ public class DatabaseConfig {
             config.setPassword(AppConfig.get("db.pass"));
 
             // Config Oracle
-            config.setDriverClassName("db.driver");
+            config.setDriverClassName(AppConfig.get("db.driver"));
             config.setMaximumPoolSize(10);
             config.setMinimumIdle(2);
             config.setIdleTimeout(30000);

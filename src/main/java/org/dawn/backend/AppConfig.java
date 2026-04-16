@@ -38,20 +38,26 @@ public class AppConfig {
 
         Matcher matcher = ENV_PATTERN.matcher(value);
         StringBuilder sb = new StringBuilder();
-
+        boolean found = false;
         while (matcher.find()) {
-            String envKey = matcher.group();
+            found = true;
+            String envKey = matcher.group(1);
 
-            String envValue = dotenv.get(envKey) != null ? dotenv.get(envKey) : System.getenv(envKey);
-
-            if (envValue != value) {
-                matcher.appendReplacement(sb, envValue);
+            String envValue = dotenv.get(envKey);
+            if (envValue == null) {
+                envValue = System.getenv(envKey);
             }
-
+            if (envValue != null) {
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(envValue));
+            } else {
+                log.error("Environment variable not found: {}", envKey);
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(matcher.group()));
+            }
         }
+        if (!found) return value;
 
         matcher.appendTail(sb);
-        return !sb.isEmpty() ? sb.toString() : value;
+        return sb.toString();
     }
 
     public static int getInt(String key) {

@@ -7,7 +7,7 @@ import org.flywaydb.core.Flyway;
 public class FlywayConfig {
 
     public static void migrate() {
-        log.info("String Flyway Migration...");
+        log.info("Starting Flyway Migration...");
         Flyway flyway = Flyway
                 .configure()
                 .dataSource(DatabaseConfig.getDataSource())
