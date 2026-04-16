@@ -1,43 +1,34 @@
 package org.dawn.backend.controller;
 
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.config.Get;
 import org.dawn.backend.config.response.ResponseObject;
+import org.dawn.backend.controller.config.AbstractController;
 import org.dawn.backend.dto.response.AuditLogResponse;
 import org.dawn.backend.service.AuditLogService;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.web.PageableDefault;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
-@RestController
-@RequestMapping("/audit-logs")
 @RequiredArgsConstructor
-@Tag(name = "Audit Log Management", description = "Tracking System Logs")
-public class AuditLogController {
+public class AuditLogController extends AbstractController {
 
     private final AuditLogService auditLogService;
 
+    @Get("")
+    public ResponseObject<List<AuditLogResponse>> getLogs(
+            HttpServletRequest req) {
+        checkRole("ROLE_ADMIN");
 
-    @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseObject<Page<AuditLogResponse>> getLogs(
-            @RequestParam(required = false) String userId,
-            @RequestParam(required = false) String action,
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        Page<AuditLogResponse> logs = auditLogService.searchLogs(userId, action, status, startDate, endDate, pageable);
+        String userId = query(req, "userId");
+        String action = query(req, "action");
+        String status = query(req, "status");
+
+        int page = queryInt(req, "page", 0);
+        int size = queryInt(req, "size", 20);
+
+        List<AuditLogResponse> logs = auditLogService.searchLogs(userId, action, status, null, null, page, size);
         return ResponseObject.success(logs);
     }
 }

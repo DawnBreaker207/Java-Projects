@@ -1,56 +1,61 @@
 package org.dawn.backend.controller;
 
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.config.Get;
+import org.dawn.backend.config.Post;
+import org.dawn.backend.config.Put;
 import org.dawn.backend.config.response.ResponseObject;
-import org.dawn.backend.config.response.ResponsePage;
+import org.dawn.backend.controller.config.AbstractController;
 import org.dawn.backend.dto.request.ImportImeiRequest;
 import org.dawn.backend.dto.request.ProductRequest;
 import org.dawn.backend.dto.response.ProductResponse;
 import org.dawn.backend.service.WarehouseService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/warehouse")
+import java.util.List;
+
 @RequiredArgsConstructor
-public class WarehouseController {
+public class WarehouseController extends AbstractController {
 
     private final WarehouseService warehouseService;
 
-    @GetMapping("/products")
-    public ResponseObject<ResponsePage<ProductResponse>> getProducts(Pageable pageable) {
-        return ResponseObject.success(warehouseService.getAll(pageable));
+    @Get("/products")
+    public ResponseObject<List<ProductResponse>> getProducts(HttpServletRequest req) {
+        int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "0");
+        int size = Integer.parseInt(req.getParameter("size") != null ? req.getParameter("size") : "10");
+        return ResponseObject.success(warehouseService.getAll());
     }
 
-    @GetMapping("/products/{id}")
-    public ResponseObject<ProductResponse> getProduct(@PathVariable Long id) {
-        return ResponseObject.success(warehouseService.getOne(id));
+    @Get("/products/{id}")
+    public ResponseObject<ProductResponse> getProduct(HttpServletRequest req) {
+        return ResponseObject.success(warehouseService.getOne(getPathId(req)));
     }
 
-    @PostMapping("/products")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseObject<ProductResponse> addProduct(@RequestBody ProductRequest p) {
-        return ResponseObject.success(warehouseService.create(p));
+    @Post("/products")
+    public ResponseObject<ProductResponse> addProduct(HttpServletRequest req) {
+        ProductRequest dto = body(req, ProductRequest.class);
+        return ResponseObject.success(warehouseService.create(dto));
     }
 
-    @PutMapping("/products/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseObject<ProductResponse> updateProduct(@PathVariable Long id, @RequestBody ProductRequest p) {
-        return ResponseObject.success(warehouseService.updateProduct(id, p));
+    @Put("/products/{id}")
+    public ResponseObject<ProductResponse> updateProduct(HttpServletRequest req) {
+        ProductRequest dto = body(req, ProductRequest.class);
+        return ResponseObject.success(warehouseService.updateProduct(getPathId(req), dto));
     }
 
-    @PostMapping("/stock/import")
-    @PreAuthorize("hasRole('STOCK') or hasRole('ADMIN')")
-    public ResponseEntity<?> importImeis(@RequestBody ImportImeiRequest req) {
-        return ResponseEntity.ok(warehouseService.importImeis(req.getProductId(), req.getImeis()));
+    @Post("/stock/import")
+    public ResponseObject<?> importImeis(HttpServletRequest req) {
+        ImportImeiRequest dto = body(req, ImportImeiRequest.class);
+        return ResponseObject.success(warehouseService.importImeis(dto.getProductId(), dto.getImeis()));
     }
 
 
-    @PostMapping("/stock/export")
-    @PreAuthorize("hasRole('STOCK') or hasRole('ADMIN')")
-    public ResponseEntity<?> exportImei(@RequestParam Long orderId, @RequestParam String imei) {
-        return ResponseEntity.ok(warehouseService.exportByImei(orderId, imei));
+    @Post("/stock/export")
+
+    public ResponseObject<?> exportImei(HttpServletRequest req) {
+        Long orderId = Long.valueOf(req.getParameter("orderId"));
+        String imei = req.getParameter("imei");
+        return ResponseObject.success(warehouseService.exportByImei(orderId, imei));
     }
 }

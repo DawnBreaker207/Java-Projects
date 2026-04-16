@@ -1,57 +1,47 @@
 package org.dawn.backend.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.config.Get;
+import org.dawn.backend.config.Post;
+import org.dawn.backend.config.Put;
 import org.dawn.backend.config.response.ResponseObject;
 import org.dawn.backend.config.response.ResponsePage;
+import org.dawn.backend.controller.config.AbstractController;
 import org.dawn.backend.dto.request.RegisterRequest;
 import org.dawn.backend.dto.response.UserResponse;
-import org.dawn.backend.entity.UserDetailsImpl;
 import org.dawn.backend.service.UserService;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 
-@RestController
-@RequestMapping("/user")
-@Tag(name = "User", description = "Operations related to user")
 @RequiredArgsConstructor
-public class UserController {
+public class UserController extends AbstractController {
 
     private final UserService userService;
 
-    @GetMapping("")
-    public ResponseObject<ResponsePage<UserResponse>> getAll(Pageable pageable) {
-        return ResponseObject.success(userService.findAll(pageable));
+    @Get("/")
+    public ResponseObject<ResponsePage<UserResponse>> getAll(HttpServletRequest req) {
+        int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "0");
+        int size = Integer.parseInt(req.getParameter("size") != null ? req.getParameter("size") : "10");
+
+
+        return ResponseObject.success(userService.findAll(page, size));
     }
 
-    @GetMapping("/{id}")
-    public ResponseObject<UserResponse> getOne(@PathVariable Long id) {
-        return ResponseObject.success(userService.findOne(id));
+    @Get("/{id}")
+    public ResponseObject<UserResponse> getOne(HttpServletRequest req) {
+        return ResponseObject.success(userService.findOne(getPathId(req)));
     }
 
-    @PostMapping("")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseObject<UserResponse> create(
-            @RequestBody RegisterRequest req,
-            @AuthenticationPrincipal UserDetailsImpl admin) {
-        return ResponseObject.success(userService.createUser(req, admin.getUsername()));
+    @Post("/")
+    public ResponseObject<UserResponse> create(HttpServletRequest req) {
+        RegisterRequest dto = body(req, RegisterRequest.class);
+        return ResponseObject.created(userService.createUser(dto, "admin"));
     }
 
-    @PutMapping("/{id}/reset-password")
-    @PreAuthorize("@roleSecurity.canUpdate(#id, authentication)")
-    public ResponseObject<UserResponse> update(
-            @PathVariable Long id,
-            @RequestBody RegisterRequest req,
-            @AuthenticationPrincipal UserDetailsImpl admin) {
-        return ResponseObject.success(userService.updateInfo(id, req, admin.getUsername()));
-    }
-
-    @PutMapping("/update/{id}/status")
-    @PreAuthorize("@roleSecurity.canUpdate(#id, authentication)")
-    public ResponseObject<UserResponse> updateStatus(@PathVariable Long id, @RequestBody Boolean status) {
+    @Put("/{id}/status")
+    public ResponseObject<UserResponse> updateStatus(HttpServletRequest req) throws Exception {
+        Long id = getPathId(req);
+        Boolean status = body(req, Boolean.class);
         return ResponseObject.success(userService.updateStatus(id, status));
     }
 }

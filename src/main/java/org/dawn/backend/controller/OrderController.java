@@ -1,27 +1,29 @@
 package org.dawn.backend.controller;
 
+
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.dawn.backend.config.Post;
+import org.dawn.backend.config.Put;
+import org.dawn.backend.config.response.ResponseObject;
+import org.dawn.backend.controller.config.AbstractController;
 import org.dawn.backend.dto.request.OrderRequest;
 import org.dawn.backend.service.OrderService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("order")
 @RequiredArgsConstructor
-public class OrderController {
+public class OrderController extends AbstractController {
 
     private final OrderService orderService;
 
-    @PostMapping("")
-    @PreAuthorize("hasRole('SALE')")
-    public ResponseEntity<?> create(@RequestBody OrderRequest req) {
-        return ResponseEntity.ok(orderService.create(req));
+    @Post("")
+    public ResponseObject<?> create(HttpServletRequest req) {
+        OrderRequest dto = body(req, OrderRequest.class);
+        return ResponseObject.created(orderService.create(dto));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> cancel(@PathVariable Long id) {
-        return ResponseEntity.ok(orderService.cancelOrder(id));
+    @Put("/{id}")
+    public ResponseObject<?> cancel(HttpServletRequest req) {
+        Long id = getPathId(req);
+        return ResponseObject.created(orderService.cancelOrder(id));
     }
 }

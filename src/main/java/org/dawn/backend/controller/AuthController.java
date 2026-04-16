@@ -1,83 +1,60 @@
 package org.dawn.backend.controller;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dawn.backend.config.Post;
+import org.dawn.backend.config.Put;
+import org.dawn.backend.config.UserPrincipal;
 import org.dawn.backend.config.response.ResponseObject;
+import org.dawn.backend.config.security.UserRoleSecurity;
+import org.dawn.backend.controller.config.AbstractController;
 import org.dawn.backend.dto.request.ChangePasswordRequest;
 import org.dawn.backend.dto.request.LoginRequest;
 import org.dawn.backend.dto.response.JwtResponse;
 import org.dawn.backend.dto.response.TokenRefreshResponse;
-import org.dawn.backend.entity.UserDetailsImpl;
 import org.dawn.backend.service.AuthService;
-import org.dawn.backend.service.UserService;
-import org.dawn.backend.utils.JWTUtils;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
-@RestController
-@RequestMapping("/auth")
-@Tag(name = "Authentication", description = "Operations related to auth")
+
 @RequiredArgsConstructor
 @Slf4j
-public class AuthController {
+public class AuthController extends AbstractController {
 
     private final AuthService authService;
 
-    private final JWTUtils jwtUtils;
 
-    private final UserService userService;
-
-    @PostMapping("/login")
-    public ResponseObject<JwtResponse> login(@RequestBody LoginRequest user) {
-        JwtResponse jwt = authService.login(user);
-        return new ResponseObject<>(
-                HttpStatus.OK,
-                "Success",
-                jwt,
-                new HttpHeaders() {
-                    {
-                        add(
-                                HttpHeaders.SET_COOKIE,
-                                jwtUtils.generateJwtRefreshCookie(jwt.getRefreshToken())
-                                        .toString());
-                    }
-                });
+    @Post("/login")
+    public ResponseObject<JwtResponse> login(HttpServletRequest req) {
+        LoginRequest loginReq = body(req, LoginRequest.class);
+        JwtResponse jwt = authService.login(loginReq);
+        return ResponseObject.success(jwt);
     }
 
 
-    @PostMapping("/refresh-token")
-    public ResponseObject<TokenRefreshResponse> refreshToken(@CookieValue("${app.jwtRefreshCookieName}") String refreshToken) {
-        TokenRefreshResponse token = authService.refreshToken(refreshToken);
-        return new ResponseObject<>(
-                HttpStatus.OK,
-                "Success",
-                token,
-                new HttpHeaders() {{
-                    add(
-                            HttpHeaders.SET_COOKIE,
-                            jwtUtils.generateJwtRefreshCookie(token.getRefreshToken())
-                                    .toString());
-                }});
+    @Post("/refresh-token")
+    public ResponseObject<TokenRefreshResponse> refreshToken(HttpServletRequest req) {
+        String refreshToken = getCookie(req, "jwt-refresh");
+        return ResponseObject.success(authService.refreshToken(refreshToken));
 
     }
 
-    @PutMapping("/{id}/reset-password")
-    @PreAuthorize("@roleSecurity.canUpdate(#id, authentication)")
-    public ResponseObject<String> resetPassword(@PathVariable Long id, @AuthenticationPrincipal UserDetailsImpl admin) {
-        return ResponseObject.success(authService.resetPassword(id, admin.getUsername()));
+    @Put("/{id}/reset-password")
+    public ResponseObject<String> resetPassword(HttpServletRequest req) {
+        Long id = getPathId(req);
+
+        UserRoleSecurity.authorize(id);
+        return ResponseObject.success(authService.resetPassword(id, currentUser().username()));
     }
 
-    @PutMapping("/change-password")
-    public ResponseObject<String> changePassword(@RequestBody ChangePasswordRequest req, @AuthenticationPrincipal UserDetailsImpl currentUser) {
+    @Put("/change-password")
+    public ResponseObject<String> changePassword(HttpServletRequest req) {
+        UserPrincipal currentUser = currentUser();
         if (currentUser == null) {
-            return ResponseObject.error(HttpStatus.BAD_REQUEST, "You need to login");
+            return ResponseObject.error(401, "You need to login");
         }
 
-        String message = authService.changePassword(currentUser.getUsername(), req);
+        ChangePasswordRequest changeReq = body(req, ChangePasswordRequest.class);
+        String message = authService.changePassword(currentUser.username(), changeReq);
 
         return ResponseObject.success(message);
     }
