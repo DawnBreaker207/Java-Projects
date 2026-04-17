@@ -78,7 +78,12 @@ public class RefreshTokenRepositoryImpl extends AbstractRepository<RefreshToken,
                 .id(rs.getLong("id"))
                 .token(rs.getString("token"))
                 .user(user)
-                .expiryDate(rs.getTimestamp("expiry_date").toInstant())
+                .expiryDate(getInstant(rs, "expiry_date"))
                 .build();
+    }
+
+    private Instant getInstant(ResultSet rs, String col) throws SQLException {
+        Timestamp ts = rs.getTimestamp(col);
+        return ts != null ? ts.toInstant() : null;
     }
 }

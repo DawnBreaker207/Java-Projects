@@ -72,8 +72,13 @@ public class RoleRepositoryImpl extends AbstractRepository<Role, Long> implement
                 .id(rs.getLong("id"))
                 .name(URole.valueOf(rs.getString("name")))
                 .description(rs.getString("description"))
-                .createdAt(rs.getTimestamp("created_at").toInstant())
-                .updatedAt(rs.getTimestamp("updated_at").toInstant())
+                .createdAt(getInstant(rs, "created_at"))
+                .updatedAt(getInstant(rs, "updated_at"))
                 .build();
+    }
+
+    private Instant getInstant(ResultSet rs, String col) throws SQLException {
+        Timestamp ts = rs.getTimestamp(col);
+        return ts != null ? ts.toInstant() : null;
     }
 }

@@ -56,7 +56,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     @Override
     public List<User> findAll() {
         String sql = """
-                SELECT u.*, r.id AS r_id, r.name AS r_name, r.level AS r_level, r.description AS r_description
+                SELECT u.*, r.id AS r_id, r.name AS r_name, r.description AS r_description
                 FROM users u JOIN roles r ON u.role_id = r.id
                 WHERE u.is_deleted = 0
                 ORDER BY u.created_at DESC
@@ -67,7 +67,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     @Override
     public Optional<User> findById(Long id) {
         String sql = """
-                SELECT u.*, r.id AS r_id, r.name AS r_name, r.level as r_level
+                SELECT u.*, r.id AS r_id, r.name AS r_name, r.description AS r_description
                 FROM users u JOIN roles r ON u.role_id = r.id
                 WHERE u.id = ?
                 """;
@@ -76,13 +76,13 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
 
     @Override
     public User save(User entity) {
+        Timestamp now = Timestamp.from(Instant.now());
         if (entity.getId() == null) {
             String sql = """
                     INSERT INTO users
                     (username, password, full_name, email, role_id, status, gender, age, phone_number, is_password_reset, is_deleted, created_at, updated_at)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)
                     """;
-            Timestamp now = Timestamp.from(Instant.now());
             Long id = insert(sql,
                     entity.getUsername(),
                     entity.getPassword(),
@@ -96,14 +96,28 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
                     entity.getIsPasswordReset() ? 1 : 0,
                     now,
                     now);
+            entity.setCreatedAt(now.toInstant());
+            entity.setUpdatedAt(now.toInstant());
             entity.setId(id);
         } else {
             String sql = """
                     UPDATE users
-                    SET full_name = ?, email = ?, role_id = ?, status = ?, gender = ?, age = ?, phone_number = ?, is_password_reset = ?, updated_at = ?
+                    SET username = ?,
+                    password = ?,
+                    full_name = ?,
+                    email = ?,
+                    role_id = ?,
+                    status = ?,
+                    gender = ?,
+                    age = ?,
+                    phone_number = ?,
+                    is_password_reset = ?,
+                    updated_at = ?
                     WHERE id = ?
                     """;
             executeQuery(sql,
+                    entity.getUsername(),
+                    entity.getPassword(),
                     entity.getFullName(),
                     entity.getEmail(),
                     entity.getRole().getId(),
@@ -112,7 +126,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
                     entity.getAge(),
                     entity.getPhoneNumber(),
                     entity.getIsPasswordReset() ? 1 : 0,
-                    Timestamp.from(Instant.now()),
+                    now,
                     entity.getId());
         }
         return entity;
@@ -121,7 +135,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     @Override
     public Optional<User> findByUsername(String username) {
         String sql = """
-                SELECT u.*, r.id AS r_id, r.name AS r_name, r.level as r_level
+                SELECT u.*, r.id AS r_id, r.name AS r_name, r.description AS r_description
                 FROM users u JOIN roles r ON u.role_id = r.id
                 WHERE u.username = ?
                 """;
@@ -131,7 +145,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
     @Override
     public Optional<User> findByEmail(String email) {
         String sql = """
-                SELECT u.*, r.id AS r_id, r.name AS r_name, r.level as r_level
+                SELECT u.*, r.id AS r_id, r.name AS r_name, r.description AS r_description
                 FROM users u JOIN roles r ON u.role_id = r.id
                 WHERE u.email = ?
                 """;
@@ -193,7 +207,7 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
                 .fullName(rs.getString("full_name"))
                 .email(rs.getString("email"))
                 .password(rs.getString("password"))
-                .lastLogin(rs.getTimestamp("last_login").toInstant())
+                .lastLogin(getInstant(rs, "last_login"))
                 .role(role)
                 .status(rs.getString("status"))
                 .gender(rs.getInt("gender"))
@@ -201,8 +215,8 @@ public class UserRepositoryImpl extends AbstractRepository<User, Long> implement
                 .phoneNumber(rs.getString("phone_number"))
                 .isPasswordReset(rs.getBoolean("is_password_reset"))
                 .isDeleted(rs.getBoolean("is_deleted"))
-                .createdAt(rs.getTimestamp("created_at").toInstant())
-                .updatedAt(rs.getTimestamp("updated_at").toInstant())
+                .createdAt(getInstant(rs, "created_at"))
+                .updatedAt(getInstant(rs, "updated_at"))
                 .build();
     }
 

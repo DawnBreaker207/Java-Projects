@@ -26,6 +26,8 @@ public class UserResponse extends BaseResponse {
 
     private String role;
 
+    private String password;
+
     private String status;
 
     private Integer gender;

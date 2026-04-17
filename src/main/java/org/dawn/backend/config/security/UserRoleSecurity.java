@@ -8,8 +8,7 @@ public class UserRoleSecurity {
     public static void authorize(Long targetUserId) {
         UserPrincipal user = SecurityContext.get();
 
-
-        boolean isAdmin = "ROLE_ADMIN".equals(user.role());
+        boolean isAdmin = "ADMIN".equals(user.role());
         boolean isOwner = user.id().equals(targetUserId);
 
         if (!isAdmin && !isOwner) {

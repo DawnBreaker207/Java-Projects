@@ -41,7 +41,6 @@ public class AuthController extends AbstractController {
     @Put("/{id}/reset-password")
     public ResponseObject<String> resetPassword(HttpServletRequest req) {
         Long id = getPathId(req);
-
         UserRoleSecurity.authorize(id);
         return ResponseObject.success(authService.resetPassword(id, currentUser().username()));
     }
@@ -49,6 +48,7 @@ public class AuthController extends AbstractController {
     @Put("/change-password")
     public ResponseObject<String> changePassword(HttpServletRequest req) {
         UserPrincipal currentUser = currentUser();
+        log.info("Current user: {}", currentUser);
         if (currentUser == null) {
             return ResponseObject.error(401, "You need to login");
         }

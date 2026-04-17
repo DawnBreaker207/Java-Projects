@@ -61,7 +61,9 @@ public class AuthService {
 
 
     public String resetPassword(Long id, String username) {
-        User user = userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USERNAME_NOT_FOUND));
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USERNAME_NOT_FOUND));
         String tempPwd = UserUtils.generateTempPassword();
 
         user.setPassword(passwordEncoder.encode(tempPwd));
@@ -74,6 +76,7 @@ public class AuthService {
     }
 
     public String changePassword(String username, ChangePasswordRequest request) {
+        log.info("Get username from change password: {}", username);
         User user = userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USERNAME_NOT_FOUND));

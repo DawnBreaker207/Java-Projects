@@ -117,10 +117,13 @@ public class AuditLogRepositoryImpl extends AbstractRepository<AuditLog, Long> i
                 .entityId(rs.getString("entity_id"))
                 .status(rs.getString("status"))
                 .details(rs.getString("details"))
-                .createdAt(rs.getTimestamp("created_at").toInstant())
-                .updatedAt(rs.getTimestamp("updated_at").toInstant())
+                .createdAt(getInstant(rs, "created_at"))
+                .updatedAt(getInstant(rs, "updated_at"))
                 .build();
     }
 
-
+    private Instant getInstant(ResultSet rs, String col) throws SQLException {
+        Timestamp ts = rs.getTimestamp(col);
+        return ts != null ? ts.toInstant() : null;
+    }
 }
