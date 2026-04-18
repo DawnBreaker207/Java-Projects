@@ -8,6 +8,7 @@ import jakarta.servlet.ServletContextListener;
 import jakarta.servlet.annotation.WebListener;
 import lombok.extern.slf4j.Slf4j;
 import org.dawn.backend.config.cloudinary.CloudinaryConfig;
+import org.dawn.backend.config.langchain.LangChainConfig;
 import org.dawn.backend.config.security.AuthTokenFilter;
 import org.dawn.backend.config.security.CorsConfig;
 import org.dawn.backend.config.security.handler.SecurityHandler;
@@ -73,7 +74,7 @@ public class GlobalContextListener implements ServletContextListener {
             AuthService authService = new AuthService(userRepository, passwordEncoder, jwtUtils, refreshTokenService, auditLogService);
             WarehouseService warehouseService = new WarehouseService(productRepository, productItemRepository, stockMovementRepository, orderRepository, orderItemRepository, auditLogService);
             OrderService orderService = new OrderService(orderRepository, orderItemRepository, productRepository, productItemRepository, warehouseService, auditLogService);
-
+            AiAgentService aiAgentService = LangChainConfig.getAssistant();
             // Controller
             UserController userController = new UserController(userService);
             AuditLogController auditLogController = new AuditLogController(auditLogService);
@@ -82,7 +83,7 @@ public class GlobalContextListener implements ServletContextListener {
             WarehouseController warehouseController = new WarehouseController(warehouseService);
             AuthController authController = new AuthController(authService);
             CloudinaryController cloudinaryController = new CloudinaryController(cloudinaryService);
-
+            AiAgentController aiAgentController = new AiAgentController(aiAgentService);
             // Initializer
             DataInitializer initializer = new DataInitializer(userRepository, roleRepository, passwordEncoder);
             initializer.run();
@@ -102,6 +103,7 @@ public class GlobalContextListener implements ServletContextListener {
             ctx.setAttribute("warehouseController", warehouseController);
             ctx.setAttribute("authController", authController);
             ctx.setAttribute("cloudinaryController", cloudinaryController);
+            ctx.setAttribute("agentController", aiAgentController);
         } catch (Exception e) {
             log.error("Error during startup: {}", e.getMessage(), e);
             throw new RuntimeException("Application failed to start", e);
