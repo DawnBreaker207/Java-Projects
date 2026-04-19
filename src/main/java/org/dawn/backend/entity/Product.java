@@ -6,12 +6,13 @@ import lombok.experimental.SuperBuilder;
 import org.dawn.backend.constant.ProductStatus;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = "items")
 public class Product extends AbstractMappedEntity {
 
     private Long id;
@@ -31,4 +32,6 @@ public class Product extends AbstractMappedEntity {
     private Integer minThreshold = 5;
 
     private ProductStatus status = ProductStatus.ACTIVE;
+
+    private List<ProductItem> items;
 }

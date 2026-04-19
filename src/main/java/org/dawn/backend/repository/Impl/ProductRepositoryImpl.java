@@ -1,6 +1,5 @@
 package org.dawn.backend.repository.Impl;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dawn.backend.constant.ProductStatus;
 import org.dawn.backend.entity.Product;
@@ -55,6 +54,7 @@ public class ProductRepositoryImpl extends AbstractRepository<Product, Long> imp
                     ProductStatus.INACTIVE.name(),
                     now,
                     now);
+            entity.setStatus(ProductStatus.INACTIVE);
             entity.setCreatedAt(now.toInstant());
             entity.setUpdatedAt(now.toInstant());
             entity.setId(id);

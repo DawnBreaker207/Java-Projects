@@ -98,16 +98,12 @@ public class WarehouseService {
         for (String imei : imeiList) {
             if (itemRepository.existsByImei(imei))
                 throw new ResourceAlreadyExistedException("ITEM " + imei + " already exists");
-
             itemRepository.save(ProductItem
                     .builder()
                     .productId(productId)
                     .imei(imei)
-                    .status(ItemStatus.AVAILABLE)
                     .build());
         }
-
-
         productRepository.addStock(productId, imeiList.size());
 
         UserPrincipal currentUser = SecurityContext.get();

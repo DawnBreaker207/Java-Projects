@@ -1,10 +1,7 @@
 package org.dawn.backend.entity;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.dawn.backend.constant.ItemStatus;
 
@@ -14,6 +11,7 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
+@EqualsAndHashCode(exclude = "product")
 public class ProductItem {
 
     private Long id;
@@ -30,4 +28,6 @@ public class ProductItem {
     private Instant importDate = Instant.now();
 
     private Instant soldDate;
+
+    private Product product;
 }

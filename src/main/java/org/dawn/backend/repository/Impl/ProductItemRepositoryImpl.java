@@ -47,10 +47,10 @@ public class ProductItemRepositoryImpl extends AbstractRepository<ProductItem, L
             Long id = insert(sql,
                     entity.getProductId(),
                     entity.getImei(),
-                    entity.getStatus(),
-                    entity.getOrderId(),
-                    entity.getImportDate() != null ? Timestamp.from(entity.getImportDate()) : now,
-                    entity.getSoldDate() != null ? Timestamp.from(entity.getSoldDate()) : now
+                    ItemStatus.AVAILABLE,
+                    null,
+                    now,
+                    null
             );
             entity.setId(id);
         } else {

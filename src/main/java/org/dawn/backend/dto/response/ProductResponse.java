@@ -27,7 +27,6 @@ public class ProductResponse extends BaseResponse {
 
     private Integer currentStock;
 
-
     private Integer minThreshold;
 
     private ProductStatus status;
