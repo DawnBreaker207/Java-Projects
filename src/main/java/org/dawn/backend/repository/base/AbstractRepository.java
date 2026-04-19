@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sql.DataSource;
+import java.math.BigDecimal;
 import java.sql.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +85,15 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql, new String[]{"ID"})) {
             for (int i = 0; i < params.length; i++) {
-                ps.setObject(i + 1, params[i]);
+                Object val = params[i];
+                int idx = i + 1;
+                switch (val) {
+                    case null -> ps.setNull(idx, Types.NULL);
+                    case Enum anEnum -> ps.setString(idx, anEnum.name());
+                    case Instant instant -> ps.setTimestamp(idx, Timestamp.from(instant));
+                    case BigDecimal bigDecimal -> ps.setBigDecimal(idx, bigDecimal);
+                    default -> ps.setObject(idx, val);
+                }
             }
             ps.executeUpdate();
             try (ResultSet rs = ps.getGeneratedKeys()) {
