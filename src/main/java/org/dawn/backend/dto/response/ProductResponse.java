@@ -8,6 +8,7 @@ import lombok.experimental.SuperBuilder;
 import org.dawn.backend.constant.ProductStatus;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,4 +31,6 @@ public class ProductResponse extends BaseResponse {
     private Integer minThreshold;
 
     private ProductStatus status;
+
+    private List<ProductItemResponse> items;
 }

@@ -1,8 +1,10 @@
 package org.dawn.backend.repository.Impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dawn.backend.constant.ItemStatus;
 import org.dawn.backend.constant.ProductStatus;
 import org.dawn.backend.entity.Product;
+import org.dawn.backend.entity.ProductItem;
 import org.dawn.backend.repository.ProductRepository;
 import org.dawn.backend.repository.base.AbstractRepository;
 
@@ -10,8 +12,7 @@ import javax.sql.DataSource;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 public class ProductRepositoryImpl extends AbstractRepository<Product, Long> implements ProductRepository {
@@ -20,19 +21,99 @@ public class ProductRepositoryImpl extends AbstractRepository<Product, Long> imp
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findList() {
         String sql = """
-                SELECT p.*
+                SELECT p.id, p.sku, p.name, p.price_import, p.price_export,
+                p.current_stock, p.min_threshold, p.status,
+                p.created_at, p.updated_at,
+                pi.id AS item_id,
+                pi.imei AS item_imei,
+                pi.status AS item_status,
+                pi.import_date AS item_import_date,
+                pi.sold_date AS item_sold_date
                 FROM products p
+                LEFT JOIN product_items pi ON p.id = pi.product_id
                 ORDER BY p.created_at DESC
                 """;
-        return queryList(sql, this::mapResultSet);
+        Map<Long, Product> map = new LinkedHashMap<>();
+
+        super.query(sql, rs -> {
+            while (rs.next()) {
+                Long id = rs.getLong("id");
+
+                Product product = map.computeIfAbsent(id, k -> {
+                    try {
+                        Product p = mapResultSet(rs);
+                        p.setItems(new ArrayList<>());
+                        return p;
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+//
+                long itemId = rs.getLong("item_id");
+                if (!rs.wasNull() && itemId > 0) {
+                    ProductItem item = ProductItem.builder()
+                            .id(itemId)
+                            .imei(rs.getString("item_imei"))
+                            .status(ItemStatus.valueOf(rs.getString("item_status")))
+                            .importDate(getInstant(rs, "item_import_date"))
+                            .soldDate(getInstant(rs, "item_sold_date"))
+                            .build();
+                    product.getItems().add(item);
+                }
+            }
+        });
+
+        return new ArrayList<>(map.values());
     }
 
     @Override
     public Optional<Product> findById(Long id) {
-        String sql = "SELECT * FROM products WHERE id = ?";
-        return queryOne(sql, this::mapResultSet, id);
+        String sql = """
+                SELECT p.id, p.sku, p.name, p.price_import, p.price_export,
+                p.current_stock, p.min_threshold, p.status,
+                p.created_at, p.updated_at,
+                pi.id AS item_id,
+                pi.imei AS item_imei,
+                pi.status AS item_status,
+                pi.import_date AS item_import_date,
+                pi.sold_date AS item_sold_date
+                FROM products p
+                LEFT JOIN product_items pi ON p.id = pi.product_id
+                WHERE p.id = ?
+                """;
+
+        Map<Long, Product> map = new LinkedHashMap<>();
+
+        super.query(sql, rs -> {
+            while (rs.next()) {
+                Long productId = rs.getLong("id");
+
+                Product product = map.computeIfAbsent(id, k -> {
+                    try {
+                        Product p = mapResultSet(rs);
+                        p.setItems(new ArrayList<>());
+                        return p;
+                    } catch (SQLException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+//
+                long itemId = rs.getLong("item_id");
+                if (!rs.wasNull() && itemId > 0) {
+                    ProductItem item = ProductItem.builder()
+                            .id(itemId)
+                            .imei(rs.getString("item_imei"))
+                            .status(ItemStatus.valueOf(rs.getString("item_status")))
+                            .importDate(getInstant(rs, "item_import_date"))
+                            .soldDate(getInstant(rs, "item_sold_date"))
+                            .build();
+                    product.getItems().add(item);
+                }
+            }
+        }, id);
+        return map.values().stream().findFirst();
     }
 
     @Override

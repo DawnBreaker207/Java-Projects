@@ -4,11 +4,14 @@ import org.dawn.backend.entity.Product;
 import org.dawn.backend.repository.base.BaseRepository;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Optional;
 
 
 public interface ProductRepository extends BaseRepository<Product, Long> {
     Optional<Product> findBySku(String sku);
+
+    List<Product> findList();
 
     Long countLowStock();
 

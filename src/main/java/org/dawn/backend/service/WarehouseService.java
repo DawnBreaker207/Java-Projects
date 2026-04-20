@@ -46,7 +46,7 @@ public class WarehouseService {
 
     public List<ProductResponse> getAll() {
         return productRepository
-                .findAll()
+                .findList()
                 .stream()
                 .map(ProductMappingHelper::map)
                 .toList();
@@ -81,7 +81,7 @@ public class WarehouseService {
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.PRODUCT_NOT_FOUND));
         existing.setName(product.getName());
         auditLogService.saveLog(
-                LogConstant.Action.CREATE_PRODUCT,
+                LogConstant.Action.UPDATE_PRODUCT,
                 LogConstant.Entity.PRODUCT,
                 existing.getId().toString(),
                 LogConstant.Status.SUCCESS,
@@ -90,7 +90,7 @@ public class WarehouseService {
     }
 
 
-    public Product importImeis(Long productId, List<String> imeiList) {
+    public ProductResponse importImeis(Long productId, List<String> imeiList) {
         Product product = productRepository
                 .findById(productId)
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.PRODUCT_NOT_FOUND));
@@ -105,6 +105,8 @@ public class WarehouseService {
                     .build());
         }
         productRepository.addStock(productId, imeiList.size());
+
+        Product updatedProduct = productRepository.findById(productId).get();
 
         UserPrincipal currentUser = SecurityContext.get();
         Long currentId = (currentUser != null) ? currentUser.id() : null;
@@ -124,7 +126,7 @@ public class WarehouseService {
                 product.getId().toString(),
                 LogConstant.Status.SUCCESS,
                 "Stock import IMEI");
-        return product;
+        return ProductMappingHelper.map(updatedProduct);
     }
 
     public ProductItem exportByImei(Long orderId, String imei) {

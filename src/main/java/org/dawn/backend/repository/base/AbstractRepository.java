@@ -52,6 +52,20 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
         return list;
     }
 
+    protected List<T> query(String sql, ResultSetHandler handler, Object... params) {
+        List<T> list = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            for (int i = 0; i < params.length; i++) ps.setObject(i + 1, params[i]);
+            try (ResultSet rs = ps.executeQuery()) {
+               handler.handle(rs);
+            }
+        } catch (SQLException e) {
+            log.error("Query error: {}", sql, e);
+        }
+        return list;
+    }
+
     // For GET ONE
     protected Optional<T> queryOne(String sql, RowMapper<T> mapper, Object... params) {
         try (Connection conn = dataSource.getConnection();
@@ -124,6 +138,10 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
             log.error("Count error: {}", sql, e);
         }
         return 0;
+    }
+
+    public interface ResultSetHandler {
+        void handle(ResultSet rs) throws SQLException;
     }
 }
 
