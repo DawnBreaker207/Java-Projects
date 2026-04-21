@@ -35,7 +35,7 @@ public class UserController extends AbstractController {
     @Post("/")
     public ResponseObject<UserResponse> create(HttpServletRequest req) {
         RegisterRequest dto = body(req, RegisterRequest.class);
-        return ResponseObject.created(userService.createUser(dto, "admin"));
+        return ResponseObject.created(userService.createUser(dto));
     }
 
     @Put("/{id}/status")

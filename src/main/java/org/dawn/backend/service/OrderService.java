@@ -8,15 +8,9 @@ import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.constant.*;
 import org.dawn.backend.dto.request.CartItemRequest;
 import org.dawn.backend.dto.request.OrderRequest;
-import org.dawn.backend.entity.Order;
-import org.dawn.backend.entity.OrderItem;
-import org.dawn.backend.entity.Product;
-import org.dawn.backend.entity.ProductItem;
+import org.dawn.backend.entity.*;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
-import org.dawn.backend.repository.OrderItemRepository;
-import org.dawn.backend.repository.OrderRepository;
-import org.dawn.backend.repository.ProductItemRepository;
-import org.dawn.backend.repository.ProductRepository;
+import org.dawn.backend.repository.*;
 
 import java.math.BigDecimal;
 
@@ -31,6 +25,8 @@ public class OrderService {
 
     private final ProductItemRepository itemRepository;
 
+    private final CustomerRepository customerRepository;
+
     private final WarehouseService warehouseService;
 
     private final AuditLogService auditLogService;
@@ -40,11 +36,22 @@ public class OrderService {
         UserPrincipal currentUser = SecurityContext.get();
         Long saleId = (currentUser != null) ? currentUser.id() : null;
 
+        Customer customer = customerRepository
+                .findByPhoneNumber(req.getCustomerPhone())
+                .orElseGet(() -> customerRepository
+                        .save(Customer
+                                .builder()
+                                .phoneNumber(req.getCustomerPhone())
+                                .fullName(req.getCustomerName())
+                                .build()));
+
+
         Order order = Order.builder()
                 .saleId(saleId)
-                .customerName(req.getCustomerName())
-                .customerPhone(req.getCustomerPhone())
+                .customerId(customer.getId())
                 .totalAmount(BigDecimal.ZERO)
+                .paymentMethod(req.getPaymentMethod())
+                .status(OrderStatus.PENDING)
                 .build();
 
         Order saveOrder = orderRepository.save(order);

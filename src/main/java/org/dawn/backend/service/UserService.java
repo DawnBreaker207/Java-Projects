@@ -9,6 +9,7 @@ import org.dawn.backend.constant.LogConstant;
 import org.dawn.backend.constant.Message;
 import org.dawn.backend.constant.URole;
 import org.dawn.backend.dto.request.RegisterRequest;
+import org.dawn.backend.dto.request.UpdateInfoRequest;
 import org.dawn.backend.dto.response.UserResponse;
 import org.dawn.backend.entity.Role;
 import org.dawn.backend.entity.User;
@@ -19,6 +20,7 @@ import org.dawn.backend.repository.UserRepository;
 import org.dawn.backend.utils.UserUtils;
 
 import javax.sql.DataSource;
+import java.time.Instant;
 
 
 @RequiredArgsConstructor
@@ -50,7 +52,7 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USER_NOT_FOUND));
     }
 
-    public UserResponse createUser(RegisterRequest request, String adminUsername) {
+    public UserResponse createUser(RegisterRequest request) {
         String baseUsername = UserUtils.getBaseUsername(request.getFullName());
 
         String finalUsername = baseUsername;
@@ -73,10 +75,6 @@ public class UserService {
                 .username(finalUsername)
                 .fullName(request.getFullName())
                 .password(passwordEncoder.encode(tempPass))
-                .gender(request.getGender())
-                .age(request.getAge())
-                .phoneNumber(request.getPhoneNumber())
-                .email(request.getEmail())
                 .status(request.getStatus() != null ? request.getStatus() : "NEW")
                 .role(role)
                 .isPasswordReset(true)
@@ -99,7 +97,7 @@ public class UserService {
         user.setIsDeleted(status);
         User savedUser = userRepository.save(user);
         auditLogService.saveLog(
-                LogConstant.Action.UPDATE_USER,
+                LogConstant.Action.UPDATE_STATUS,
                 LogConstant.Entity.USER,
                 savedUser.getId().toString(),
                 LogConstant.Status.SUCCESS,
@@ -107,23 +105,18 @@ public class UserService {
         return UserMappingHelper.map(savedUser);
     }
 
-    public UserResponse updateInfo(Long id, RegisterRequest request, String username) {
+    public UserResponse updateInfo(Long id, UpdateInfoRequest request) {
         User user = userRepository
                 .findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USERNAME_NOT_FOUND));
         user.setFullName(request.getFullName());
         user.setGender(request.getGender());
-        user.setAge(request.getAge());
+        user.setDob(request.getDob());
         user.setPhoneNumber(request.getPhoneNumber());
-        user.setEmail(request.getEmail());
-        user.setStatus(request.getStatus());
-
-        Role role = roleRepository.findByName(URole.valueOf(request.getRoleName())).orElse(user.getRole());
-        user.setRole(role);
 
         User savedUser = userRepository.save(user);
         auditLogService.saveLog(
-                LogConstant.Action.UPDATE_USER,
+                LogConstant.Action.UPDATE_INFO,
                 LogConstant.Entity.USER,
                 savedUser.getId().toString(),
                 LogConstant.Status.SUCCESS,
@@ -131,6 +124,23 @@ public class UserService {
         return UserMappingHelper.map(savedUser);
     }
 
+    public UserResponse updateRole(Long id, URole roleName) {
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.USERNAME_NOT_FOUND));
+
+        Role role = roleRepository.findByName(roleName).orElse(user.getRole());
+        user.setRole(role);
+
+        User savedUser = userRepository.save(user);
+        auditLogService.saveLog(
+                LogConstant.Action.UPDATE_ROLE,
+                LogConstant.Entity.USER,
+                savedUser.getId().toString(),
+                LogConstant.Status.SUCCESS,
+                "Update user role");
+        return UserMappingHelper.map(savedUser);
+    }
 
     public boolean existsByRoleName(String roleName) {
         Role role = roleRepository

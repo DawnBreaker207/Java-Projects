@@ -11,6 +11,9 @@ public class LogConstant {
         // User
         public static final String CREATE_USER = "CREATE_USER";
         public static final String UPDATE_USER = "UPDATE_USER";
+        public static final String UPDATE_INFO = "UPDATE_USER_INFO";
+        public static final String UPDATE_STATUS = "UPDATE_USER_STATUS";
+        public static final String UPDATE_ROLE = "UPDATE_USER_ROLE";
         public static final String DELETE_USER = "DELETE_USER";
         public static final String CHANGE_PASSWORD = "CHANGE_PASSWORD";
         public static final String RESET_PASSWORD = "RESET_PASSWORD";

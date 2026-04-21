@@ -43,7 +43,7 @@ public class AuditLogService {
 
     public void saveLog(String action, String entityName, String entityId, String status, String details) {
         UserPrincipal currentUser = SecurityContext.get();
-        String userId = (currentUser != null) ? currentUser.username() : "SYSTEM";
+        Long userId = Long.valueOf((currentUser != null) ? currentUser.username() : "SYSTEM");
 
         AuditLog log = AuditLog.builder()
                 .userId(userId)

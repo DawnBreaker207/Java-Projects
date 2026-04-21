@@ -58,7 +58,7 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
              PreparedStatement ps = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) ps.setObject(i + 1, params[i]);
             try (ResultSet rs = ps.executeQuery()) {
-               handler.handle(rs);
+                handler.handle(rs);
             }
         } catch (SQLException e) {
             log.error("Query error: {}", sql, e);
@@ -138,6 +138,11 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
             log.error("Count error: {}", sql, e);
         }
         return 0;
+    }
+
+    protected Instant getInstant(ResultSet rs, String col) throws SQLException {
+        Timestamp ts = rs.getTimestamp(col);
+        return ts != null ? ts.toInstant() : null;
     }
 
     public interface ResultSetHandler {

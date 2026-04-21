@@ -46,7 +46,7 @@ public class WarehouseService {
 
     public List<ProductResponse> getAll() {
         return productRepository
-                .findList()
+                .findAll()
                 .stream()
                 .map(ProductMappingHelper::map)
                 .toList();

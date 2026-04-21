@@ -11,8 +11,13 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class RegisterRequest {
+public class UpdateInfoRequest {
+
     private String fullName;
-    private String roleName;
-    private String status;
+
+    private Integer gender;
+
+    private Instant dob;
+
+    private String phoneNumber;
 }
