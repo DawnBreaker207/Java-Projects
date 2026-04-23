@@ -5,16 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ImportImeiRequest {
-    private Long productId;
-    private BigDecimal costPrice;
-    private String supplier;
-    private List<String> imeiList;
+public class CategoryRequest {
+
+    private String name;
+
+    private String description;
 }

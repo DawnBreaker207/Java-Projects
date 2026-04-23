@@ -1,11 +1,9 @@
 package org.dawn.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,5 +18,9 @@ public class Category extends AbstractMappedEntity {
 
     private String description;
 
-    private List<Product> items;
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    @Builder.Default
+    private List<Product> items = new ArrayList<>();
 }
