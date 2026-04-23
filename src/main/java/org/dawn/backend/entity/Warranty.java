@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.dawn.backend.constant.WarrantyStatus;
 
 import java.time.Instant;
 
@@ -11,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class WarrantyClaim {
+public class Warranty {
     private Long id;
 
     private Long productItemId;
@@ -22,7 +23,7 @@ public class WarrantyClaim {
 
     private String issueDescription;
 
-    private String status;
+    private WarrantyStatus status;
 
     private Instant receivedDate;
 
