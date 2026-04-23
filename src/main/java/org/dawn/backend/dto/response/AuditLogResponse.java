@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 public class AuditLogResponse extends BaseResponse {
     private Long id;
 
-    private String userId;
+    private Long userId;
 
     private String action;
 

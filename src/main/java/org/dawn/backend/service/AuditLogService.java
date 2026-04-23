@@ -43,8 +43,21 @@ public class AuditLogService {
 
     public void saveLog(String action, String entityName, String entityId, String status, String details) {
         UserPrincipal currentUser = SecurityContext.get();
-        Long userId = Long.valueOf((currentUser != null) ? currentUser.username() : "SYSTEM");
+        log.info("Get current user: {}", currentUser);
+        Long userId = (currentUser != null) ? currentUser.id() : 0L;
 
+        AuditLog log = AuditLog.builder()
+                .userId(userId)
+                .action(action)
+                .entityName(entityName)
+                .entityId(entityId)
+                .status(status)
+                .details(details)
+                .build();
+        auditLogRepository.save(log);
+    }
+
+    public void saveLog(Long userId, String action, String entityName, String entityId, String status, String details) {
         AuditLog log = AuditLog.builder()
                 .userId(userId)
                 .action(action)

@@ -25,13 +25,18 @@ public class AuditLogRepositoryImpl extends AbstractRepository<AuditLog, Long> i
 
     @Override
     public List<AuditLog> search(String userId, String action, String status, LocalDateTime startDate, LocalDateTime endDate, int page, int size) {
-        StringBuilder sql = new StringBuilder("SELECT * FROM audit_logs WHERE 1=1");
+        StringBuilder sql = new StringBuilder("""
+                SELECT a.*, u.full_name AS staff_name, u.username AS staff_username
+                FROM audit_logs
+                LEFT JOIN users u ON a.user_id = u.id
+                WHERE 1=1
+                """);
         List<Object> params = new ArrayList<>();
 
 
         if (userId != null && !userId.isBlank()) {
-            sql.append(" AND LOWER(user_id) LIKE ?");
-            params.add("%" + userId.toLowerCase() + "%");
+            sql.append(" AND LOWER(user_id) = ?");
+            params.add(Long.valueOf(userId));
         }
 
         if (action != null && !action.isBlank()) {
@@ -46,15 +51,18 @@ public class AuditLogRepositoryImpl extends AbstractRepository<AuditLog, Long> i
 
         if (startDate != null) {
             sql.append(" AND created_at >= ?");
-            params.add(startDate);
+            params.add(Timestamp.valueOf(startDate));
         }
 
         if (endDate != null) {
             sql.append(" AND created_at <= ?");
-            params.add(endDate);
+            params.add(Timestamp.valueOf(endDate));
         }
 
-        sql.append(" ORDER BY created_at DESC LIMIT ? OFFSET ?");
+        sql.append("""
+                ORDER BY a.created_at
+                DESC OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """);
         params.add(size);
         params.add(page * size);
         return queryList(sql.toString(), this::mapResultSet, params.toArray());
@@ -108,10 +116,22 @@ public class AuditLogRepositoryImpl extends AbstractRepository<AuditLog, Long> i
         return executeQuery(sql, threshold);
     }
 
+    @Override
+    public List<AuditLog> findTop5OrderByCreatedAtDesc() {
+        String sql = """
+                SELECT a.*, u.full_name AS staff_name
+                FROM audit_logs a
+                LEFT JOIN users u ON a.user_id = u.id
+                ORDER BY a.created_at DESC
+                OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY
+                """;
+        return queryList(sql, this::mapResultSet);
+    }
+
     private AuditLog mapResultSet(ResultSet rs) throws SQLException {
         return AuditLog.builder()
                 .id(rs.getLong("id"))
-                .userId(rs.getString("user_id"))
+                .userId(rs.getLong("user_id"))
                 .action(rs.getString("action"))
                 .entityName(rs.getString("entity_name"))
                 .entityId(rs.getString("entity_id"))
@@ -120,10 +140,5 @@ public class AuditLogRepositoryImpl extends AbstractRepository<AuditLog, Long> i
                 .createdAt(getInstant(rs, "created_at"))
                 .updatedAt(getInstant(rs, "updated_at"))
                 .build();
-    }
-
-    private Instant getInstant(ResultSet rs, String col) throws SQLException {
-        Timestamp ts = rs.getTimestamp(col);
-        return ts != null ? ts.toInstant() : null;
     }
 }
