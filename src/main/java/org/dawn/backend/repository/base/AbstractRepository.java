@@ -85,7 +85,15 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
         try (Connection conn = dataSource.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             for (int i = 0; i < params.length; i++) {
-                ps.setObject(i + 1, params[i]);
+                Object val = params[i];
+                int idx = i + 1;
+                switch (val) {
+                    case null -> ps.setNull(idx, Types.NULL);
+                    case Enum anEnum -> ps.setString(idx, anEnum.name());
+                    case Instant instant -> ps.setTimestamp(idx, Timestamp.from(instant));
+                    case BigDecimal bigDecimal -> ps.setBigDecimal(idx, bigDecimal);
+                    default -> ps.setObject(idx, val);
+                }
             }
             return ps.executeUpdate();
         } catch (SQLException e) {
@@ -120,6 +128,36 @@ public abstract class AbstractRepository<T, ID> implements BaseRepository<T, ID>
         return null;
     }
 
+
+    protected void executeBatch(String sql, List<Object[]> paramsList) {
+        try (Connection conn = dataSource.getConnection()) {
+            conn.setAutoCommit(false);
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                for (Object[] params : paramsList) {
+                    for (int i = 0; i < params.length; i++) {
+                        Object val = params[i];
+                        int idx = i + 1;
+                        switch (val) {
+                            case null -> ps.setNull(idx, Types.NULL);
+                            case Enum anEnum -> ps.setString(idx, anEnum.name());
+                            case Instant instant -> ps.setTimestamp(idx, Timestamp.from(instant));
+                            case BigDecimal bigDecimal -> ps.setBigDecimal(idx, bigDecimal);
+                            default -> ps.setObject(idx, val);
+                        }
+                    }
+                    ps.addBatch();
+                }
+                ps.executeBatch();
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                log.error("Batch execute error: {}", sql, e);
+                throw new RuntimeException("Error saved batch", e);
+            }
+        } catch (SQLException e) {
+            log.error("Execute error", e);
+        }
+    }
 
     // For COUNT
     protected long count(String sql, Object... params) {

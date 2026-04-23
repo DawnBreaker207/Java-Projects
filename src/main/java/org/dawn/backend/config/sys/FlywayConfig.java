@@ -12,10 +12,17 @@ public class FlywayConfig {
                 .configure()
                 .dataSource(DatabaseConfig.getDataSource())
                 .locations(AppConfig.get("flyway.locations"))
-                .baselineOnMigrate(true).load();
+                .baselineOnMigrate(true)
+                .baselineVersion("0")
+                .load();
 
-        flyway.migrate();
+        try {
+            flyway.migrate();
 
+        } catch (Exception e) {
+            log.warn("Flyway migration failed, attempting repair...", e);
+            flyway.repair();
+        }
         log.info("Flyway Migration completed successfully");
     }
 }

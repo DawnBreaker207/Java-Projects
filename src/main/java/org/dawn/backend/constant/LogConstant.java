@@ -18,27 +18,38 @@ public class LogConstant {
         public static final String CHANGE_PASSWORD = "CHANGE_PASSWORD";
         public static final String RESET_PASSWORD = "RESET_PASSWORD";
 
+        // Category
+        public static final String CREATE_CATEGORY = "CREATE_CATEGORY";
+        public static final String UPDATE_CATEGORY = "UPDATE_CATEGORY";
+        public static final String DELETE_CATEGORY = "DELETE_CATEGORY";
+
         // Warehouse/Product
         public static final String CREATE_PRODUCT = "CREATE_PRODUCT";
         public static final String UPDATE_PRODUCT = "UPDATE_PRODUCT";
         public static final String DELETE_PRODUCT = "DELETE_PRODUCT";
         public static final String IMPORT_STOCK = "IMPORT_STOCK";
         public static final String ADJUST_STOCK = "ADJUST_STOCK";
+        public static final String MARK_DAMAGED = "MARK_DAMAGED";
 
         // Order
         public static final String CREATE_ORDER = "CREATE_ORDER";
         public static final String CANCEL_ORDER = "CANCEL_ORDER";
         public static final String COMPLETE_ORDER = "COMPLETE_ORDER";
         public static final String RETURN_ORDER = "RETURN_ORDER";
+
+        // Warranty
+        public static final String RECEIVE_WARRANTY = "RECEIVE_WARRANTY";
     }
 
     // Entity
     public static class Entity {
         public static final String AUTH = "AUTH";
         public static final String USER = "USER";
+        public static final String CATEGORY = "CATEGORY";
         public static final String PRODUCT = "PRODUCT";
         public static final String PRODUCT_ITEM = "PRODUCT_ITEM";
         public static final String ORDER = "ORDER";
+        public static final String WARRANTY_CLAIM = "WARRANTY_CLAIM";
         public static final String AUDIT_LOG = "AUDIT_LOG";
     }
 

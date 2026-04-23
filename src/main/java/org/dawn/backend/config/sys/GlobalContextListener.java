@@ -50,7 +50,9 @@ public class GlobalContextListener implements ServletContextListener {
             UserRepository userRepository = new UserRepositoryImpl(datasource);
             RoleRepository roleRepository = new RoleRepositoryImpl(datasource);
             RefreshTokenRepository refreshTokenRepository = new RefreshTokenRepositoryImpl(datasource);
-
+            WarrantyRepository warrantyRepository = new WarrantyRepositoryImpl(datasource);
+            CustomerRepository customerRepository = new CustomerRepositoryImpl(datasource);
+            CategoryRepository categoryRepository = new CategoryRepositoryImpl(datasource);
             // Thread Pool
             ExecutorService executorService = Executors.newFixedThreadPool(10);
 
@@ -68,22 +70,25 @@ public class GlobalContextListener implements ServletContextListener {
             CloudinaryService cloudinaryService = new CloudinaryService(cloudinary);
             AuditLogService auditLogService = new AuditLogService(auditLogRepository);
             RefreshTokenService refreshTokenService = new RefreshTokenService(refreshTokenRepository, userRepository);
-            DashboardService dashboardService = new DashboardService(productRepository, orderRepository);
-            ReportService reportService = new ReportService(productRepository, productItemRepository, stockMovementRepository);
+            DashboardService dashboardService = new DashboardService(productRepository, orderRepository, productItemRepository, auditLogRepository, warrantyRepository, customerRepository);
             UserService userService = new UserService(userRepository, roleRepository, passwordEncoder, auditLogService, datasource);
             AuthService authService = new AuthService(userRepository, passwordEncoder, jwtUtils, refreshTokenService, auditLogService);
             WarehouseService warehouseService = new WarehouseService(productRepository, productItemRepository, stockMovementRepository, orderRepository, orderItemRepository, auditLogService);
-            OrderService orderService = new OrderService(orderRepository, orderItemRepository, productRepository, productItemRepository, warehouseService, auditLogService);
+            OrderService orderService = new OrderService(orderRepository, orderItemRepository, productRepository, productItemRepository, customerRepository, warehouseService, auditLogService);
+            CategoryService categoryService = new CategoryService(categoryRepository, auditLogService);
+            WarrantyService warrantyService = new WarrantyService(warrantyRepository, productItemRepository, orderRepository, auditLogService, warehouseService);
             AiAgentService aiAgentService = LangChainConfig.getAssistant();
             // Controller
             UserController userController = new UserController(userService);
             AuditLogController auditLogController = new AuditLogController(auditLogService);
-            DashboardController dashboardController = new DashboardController(reportService, dashboardService);
+            CategoryController categoryController = new CategoryController(categoryService);
+            DashboardController dashboardController = new DashboardController(dashboardService);
             OrderController orderController = new OrderController(orderService);
             WarehouseController warehouseController = new WarehouseController(warehouseService);
             AuthController authController = new AuthController(authService);
             CloudinaryController cloudinaryController = new CloudinaryController(cloudinaryService);
             AiAgentController aiAgentController = new AiAgentController(aiAgentService);
+            WarrantyController warrantyController = new WarrantyController(warrantyService);
             // Initializer
             DataInitializer initializer = new DataInitializer(userRepository, roleRepository, passwordEncoder);
             initializer.run();
@@ -96,14 +101,16 @@ public class GlobalContextListener implements ServletContextListener {
             ctx.setAttribute("refreshTokenService", refreshTokenService);
             ctx.setAttribute("jwtUtils", jwtUtils);
             // Controller Context
-            ctx.setAttribute("userController", userController);
-            ctx.setAttribute("logsController", auditLogController);
-            ctx.setAttribute("dashboardController", dashboardController);
-            ctx.setAttribute("orderController", orderController);
-            ctx.setAttribute("warehouseController", warehouseController);
-            ctx.setAttribute("authController", authController);
-            ctx.setAttribute("cloudinaryController", cloudinaryController);
             ctx.setAttribute("agentController", aiAgentController);
+            ctx.setAttribute("authController", authController);
+            ctx.setAttribute("categoryController", categoryController);
+            ctx.setAttribute("cloudinaryController", cloudinaryController);
+            ctx.setAttribute("dashboardController", dashboardController);
+            ctx.setAttribute("logsController", auditLogController);
+            ctx.setAttribute("orderController", orderController);
+            ctx.setAttribute("userController", userController);
+            ctx.setAttribute("warehouseController", warehouseController);
+            ctx.setAttribute("warrantyController", warrantyController);
         } catch (Exception e) {
             log.error("Error during startup: {}", e.getMessage(), e);
             throw new RuntimeException("Application failed to start", e);
