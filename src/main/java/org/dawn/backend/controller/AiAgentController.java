@@ -19,4 +19,11 @@ public class AiAgentController extends AbstractController {
         String answer = agentService.chat(sessionId, dto.getMessage());
         return ResponseObject.success(answer);
     }
+
+    @Post("/suggest")
+    public ResponseObject<String> suggest(HttpServletRequest req) {
+        ChatRequest dto = body(req, ChatRequest.class);
+        String answer = agentService.suggest(dto.getMessage());
+        return ResponseObject.success(answer);
+    }
 }
