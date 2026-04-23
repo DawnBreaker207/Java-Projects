@@ -16,11 +16,15 @@ public class Message {
         public static final String ROLE_NOT_FOUND = "Role not found";
         public static final String PERMISSION_DENIED = "You don't have permission";
 
+        //     Category
+        public static final String CATEGORY_NOT_FOUND = "Category not found";
+        public static final String CATEGORY_EXISTED = "Category existed";
         //     Product
         public static final String PRODUCT_NOT_FOUND = "Product not found";
         public static final String PRODUCT_EXISTED = "Product existed";
         //     Product Item
         public static final String PRODUCT_ITEM_NOT_FOUND = "Product item not found";
+        public static final String PRODUCT_ITEM_EXISTED = "Product item existed";
 
         //     Order
         public static final String ORDER_NOT_FOUND = "Order not found";
