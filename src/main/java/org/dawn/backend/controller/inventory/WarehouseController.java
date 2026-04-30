@@ -7,6 +7,9 @@ import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
 import org.dawn.backend.controller.base.AbstractController;
+import org.dawn.backend.dto.inventory.WarehouseLocationResponse;
+import org.dawn.backend.dto.inventory.WarehouseRequest;
+import org.dawn.backend.dto.inventory.WarehouseResponse;
 import org.dawn.backend.entity.Warehouse;
 import org.dawn.backend.entity.WarehouseLocation;
 import org.dawn.backend.service.inventory.WarehouseService;
@@ -18,8 +21,8 @@ public class WarehouseController extends AbstractController {
     private final WarehouseService warehouseService;
 
     @Post("/create")
-    public ResponseObject<Warehouse> create(HttpServletRequest req) {
-        Warehouse dto = body(req, Warehouse.class);
+    public ResponseObject<WarehouseResponse> create(HttpServletRequest req) {
+        WarehouseRequest dto = body(req, WarehouseRequest.class);
         return ResponseObject.success(warehouseService.createWarehouse(dto));
     }
 
@@ -45,12 +48,12 @@ public class WarehouseController extends AbstractController {
     }
 
     @Get("/map")
-    public ResponseObject<List<Warehouse>> getMap(HttpServletRequest req) {
+    public ResponseObject<List<WarehouseResponse>> getMap(HttpServletRequest req) {
         return ResponseObject.success(warehouseService.getPhysicalMap());
     }
 
     @Get("/available-bins")
-    public ResponseObject<List<WarehouseLocation>> getAvailableBins(HttpServletRequest req) {
+    public ResponseObject<List<WarehouseLocationResponse>> getAvailableBins(HttpServletRequest req) {
         Long warehouseId = Long.valueOf(req.getParameter("warehouseId"));
         return ResponseObject.success(warehouseService.getAvailableBins(warehouseId));
     }

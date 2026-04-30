@@ -8,6 +8,10 @@ import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.constant.inventory.MovementType;
+import org.dawn.backend.dto.inventory.WarehouseLocationResponse;
+import org.dawn.backend.dto.inventory.WarehouseMappingHelper;
+import org.dawn.backend.dto.inventory.WarehouseRequest;
+import org.dawn.backend.dto.inventory.WarehouseResponse;
 import org.dawn.backend.entity.ProductItem;
 import org.dawn.backend.entity.Warehouse;
 import org.dawn.backend.entity.WarehouseLocation;
@@ -30,9 +34,9 @@ public class WarehouseService {
     private final ProductItemRepository itemRepository;
     private final TransactionManager manager;
 
-    public Warehouse createWarehouse(Warehouse warehouse) {
+    public WarehouseResponse createWarehouse(WarehouseRequest warehouse) {
         return manager.execute(() -> {
-            Warehouse saved = warehouseRepository.save(warehouse);
+            Warehouse saved = warehouseRepository.save(WarehouseMappingHelper.map(warehouse));
 
             auditLogService.saveLog(
                     LogConstant.Action.CREATE_WAREHOUSE,
@@ -41,7 +45,7 @@ public class WarehouseService {
                     LogConstant.Status.SUCCESS,
                     "Create new warehouse: " + saved.getName()
             );
-            return saved;
+            return WarehouseMappingHelper.map(saved);
         });
     }
 
@@ -89,12 +93,20 @@ public class WarehouseService {
         });
     }
 
-    public List<Warehouse> getPhysicalMap() {
-        return warehouseRepository.findAll();
+    public List<WarehouseResponse> getPhysicalMap() {
+        return warehouseRepository
+                .findAll()
+                .stream()
+                .map(WarehouseMappingHelper::map)
+                .toList();
     }
 
-    public List<WarehouseLocation> getAvailableBins(Long warehouseId) {
-        return locationRepository.findEmptyLocations();
+    public List<WarehouseLocationResponse> getAvailableBins(Long warehouseId) {
+        return locationRepository
+                .findEmptyLocations()
+                .stream()
+                .map(WarehouseMappingHelper::mapItem)
+                .toList();
     }
 
 }

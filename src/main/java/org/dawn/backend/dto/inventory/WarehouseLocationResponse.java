@@ -1,0 +1,20 @@
+package org.dawn.backend.dto.inventory;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public class WarehouseLocationResponse {
+    private String zoneName;
+
+    private String rowNum;
+
+    private String shelfNum;
+
+    private String binNum;
+}
