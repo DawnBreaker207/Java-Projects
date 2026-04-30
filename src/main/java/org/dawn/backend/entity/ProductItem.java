@@ -19,6 +19,8 @@ public class ProductItem {
 
     private Long productId;
 
+    private Long locationId;
+
     private String imei;
 
     private BigDecimal costPrice;
