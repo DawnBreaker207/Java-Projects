@@ -9,15 +9,17 @@ import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.constant.warranty.WarrantyStatus;
 import org.dawn.backend.dto.warranty.CreateWarrantyRequest;
 import org.dawn.backend.dto.warranty.UpdateWarrantyRequest;
+import org.dawn.backend.dto.warranty.WarrantyMappingHelper;
+import org.dawn.backend.dto.warranty.WarrantyResponse;
 import org.dawn.backend.entity.Order;
 import org.dawn.backend.entity.ProductItem;
 import org.dawn.backend.entity.Warranty;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
-import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.catalog.ProductItemRepository;
+import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.warranty.WarrantyRepository;
-import org.dawn.backend.service.system.AuditLogService;
 import org.dawn.backend.service.inventory.StockService;
+import org.dawn.backend.service.system.AuditLogService;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -32,6 +34,21 @@ public class WarrantyService {
     private final AuditLogService auditLogService;
     private final StockService stockService;
     private final TransactionManager manager;
+
+    public List<WarrantyResponse> getAll() {
+        return warrantyRepository
+                .findAll()
+                .stream()
+                .map(WarrantyMappingHelper::map)
+                .toList();
+    }
+
+    public WarrantyResponse getOne(Long id) {
+        return warrantyRepository
+                .findById(id)
+                .map(WarrantyMappingHelper::map)
+                .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.WARRANTY_NOT_FOUND));
+    }
 
     public List<Warranty> createClaim(CreateWarrantyRequest req) {
         return manager.execute(() -> {

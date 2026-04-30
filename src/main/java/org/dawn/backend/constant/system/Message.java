@@ -33,5 +33,8 @@ public class Message {
         //      Customer
         public static final String CUSTOMER_NOT_FOUND = "Customer not found";
         public static final String CUSTOMER_EXISTED = "Customer existed";
+        //      Warranty
+        public static final String WARRANTY_NOT_FOUND = "Warranty not found";
+        public static final String WARRANTY_EXISTED = "Warranty existed";
     }
 }
