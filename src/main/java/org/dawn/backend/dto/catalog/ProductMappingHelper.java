@@ -15,6 +15,20 @@ public interface ProductMappingHelper {
                 .currentStock(req.getCurrentStock())
                 .minThreshold(req.getMinThreshold())
                 .specifications(req.getSpecifications())
+                .build();
+    }
+
+    static Product map(ProductUpdateRequest req) {
+        return Product.builder()
+                .sku(req.getSku())
+                .categoryId(req.getCategoryId())
+                .name(req.getName())
+                .priceImport(req.getPriceImport())
+                .priceExport(req.getPriceExport())
+                .hasImei(req.getHasImei())
+                .currentStock(req.getCurrentStock())
+                .minThreshold(req.getMinThreshold())
+                .specifications(req.getSpecifications())
                 .status(req.getStatus())
                 .isDeleted(req.getIsDeleted())
                 .build();

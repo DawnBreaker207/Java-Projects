@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.catalog.ProductStatus;
+import org.dawn.backend.constant.system.ActiveStatus;
 import org.dawn.backend.dto.shared.BaseResponse;
 
 import java.math.BigDecimal;
@@ -33,7 +33,7 @@ public class ProductResponse extends BaseResponse {
 
     private Integer minThreshold;
 
-    private ProductStatus status;
+    private ActiveStatus status;
 
     private String specifications;
 

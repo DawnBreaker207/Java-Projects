@@ -1,6 +1,6 @@
 package org.dawn.backend.repository.catalog.Impl;
 
-import org.dawn.backend.constant.catalog.ProductStatus;
+import org.dawn.backend.constant.system.ActiveStatus;
 import org.dawn.backend.entity.Category;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.repository.catalog.CategoryRepository;
@@ -62,7 +62,7 @@ public class CategoryRepositoryImpl extends AbstractRepository<Category, Long> i
                             .priceExport(rs.getBigDecimal("price_export_std"))
                             .currentStock(rs.getInt("current_stock"))
                             .minThreshold(rs.getInt("min_threshold"))
-                            .status(ProductStatus.valueOf(rs.getString("pro_status")))
+                            .status(ActiveStatus.valueOf(rs.getString("pro_status")))
                             .createdAt(getInstant(rs, "pro_created_at"))
                             .updatedAt(getInstant(rs, "pro_updated_at"))
                             .build();
@@ -117,7 +117,7 @@ public class CategoryRepositoryImpl extends AbstractRepository<Category, Long> i
                             .priceExport(rs.getBigDecimal("price_export_std"))
                             .currentStock(rs.getInt("current_stock"))
                             .minThreshold(rs.getInt("min_threshold"))
-                            .status(ProductStatus.valueOf(rs.getString("pro_status")))
+                            .status(ActiveStatus.valueOf(rs.getString("pro_status")))
                             .createdAt(getInstant(rs, "pro_created_at"))
                             .updatedAt(getInstant(rs, "pro_updated_at"))
                             .build();
@@ -173,7 +173,7 @@ public class CategoryRepositoryImpl extends AbstractRepository<Category, Long> i
                             .priceExport(rs.getBigDecimal("price_export_std"))
                             .currentStock(rs.getInt("current_stock"))
                             .minThreshold(rs.getInt("min_threshold"))
-                            .status(ProductStatus.valueOf(rs.getString("pro_status")))
+                            .status(ActiveStatus.valueOf(rs.getString("pro_status")))
                             .createdAt(getInstant(rs, "created_at"))
                             .updatedAt(getInstant(rs, "updated_at"))
                             .build();

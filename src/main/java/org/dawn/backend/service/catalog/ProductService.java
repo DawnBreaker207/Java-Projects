@@ -7,6 +7,7 @@ import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.dto.catalog.ProductRequest;
 import org.dawn.backend.dto.catalog.ProductResponse;
+import org.dawn.backend.dto.catalog.ProductUpdateRequest;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.exception.wrapper.ResourceAlreadyExistedException;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
@@ -67,7 +68,7 @@ public class ProductService {
     }
 
 
-    public ProductResponse updateProduct(Long id, ProductRequest req) {
+    public ProductResponse updateProduct(Long id, ProductUpdateRequest req) {
         return manager.execute(() -> {
             Product existing = productRepository
                     .findById(id)

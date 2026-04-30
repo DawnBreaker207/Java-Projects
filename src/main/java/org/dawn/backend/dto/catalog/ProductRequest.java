@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.catalog.ProductStatus;
+import org.dawn.backend.constant.system.ActiveStatus;
 
 import java.math.BigDecimal;
 
@@ -33,8 +33,4 @@ public class ProductRequest {
     private Integer minThreshold;
 
     private String specifications;
-
-    private ProductStatus status;
-
-    private Boolean isDeleted;
 }

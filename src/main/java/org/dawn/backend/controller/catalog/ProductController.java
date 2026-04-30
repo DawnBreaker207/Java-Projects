@@ -9,6 +9,7 @@ import org.dawn.backend.config.web.response.ResponseObject;
 import org.dawn.backend.controller.base.AbstractController;
 import org.dawn.backend.dto.catalog.ProductRequest;
 import org.dawn.backend.dto.catalog.ProductResponse;
+import org.dawn.backend.dto.catalog.ProductUpdateRequest;
 import org.dawn.backend.service.catalog.ProductService;
 
 import java.util.List;
@@ -37,7 +38,7 @@ public class ProductController extends AbstractController {
 
     @Put("/{id}")
     public ResponseObject<ProductResponse> updateProduct(HttpServletRequest req) {
-        ProductRequest dto = body(req, ProductRequest.class);
+        ProductUpdateRequest dto = body(req, ProductUpdateRequest.class);
         return ResponseObject.success(productService.updateProduct(getPathId(req), dto));
     }
 }

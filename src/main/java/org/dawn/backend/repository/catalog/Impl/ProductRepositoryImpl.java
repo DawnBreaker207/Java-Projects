@@ -2,7 +2,7 @@ package org.dawn.backend.repository.catalog.Impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.dawn.backend.constant.catalog.ItemStatus;
-import org.dawn.backend.constant.catalog.ProductStatus;
+import org.dawn.backend.constant.system.ActiveStatus;
 import org.dawn.backend.entity.Category;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.entity.ProductItem;
@@ -145,11 +145,11 @@ public class ProductRepositoryImpl extends AbstractRepository<Product, Long> imp
                     entity.getPriceExport(),
                     entity.getCurrentStock(),
                     entity.getMinThreshold(),
-                    ProductStatus.INACTIVE.name(),
+                    ActiveStatus.INACTIVE.name(),
                     entity.getIsDeleted() ? 1 : 0,
                     now,
                     now);
-            entity.setStatus(ProductStatus.INACTIVE);
+            entity.setStatus(ActiveStatus.INACTIVE);
             entity.setCreatedAt(now.toInstant());
             entity.setUpdatedAt(now.toInstant());
             entity.setId(id);
@@ -273,7 +273,7 @@ public class ProductRepositoryImpl extends AbstractRepository<Product, Long> imp
                 .priceExport(rs.getBigDecimal("price_export_std"))
                 .currentStock(rs.getInt("current_stock"))
                 .minThreshold(rs.getInt("min_threshold"))
-                .status(ProductStatus.valueOf(rs.getString("pro_status")))
+                .status(ActiveStatus.valueOf(rs.getString("pro_status")))
                 .isDeleted(rs.getBoolean("pro_is_deleted"))
                 .createdAt(getInstant(rs, "created_at"))
                 .updatedAt(getInstant(rs, "updated_at"))
