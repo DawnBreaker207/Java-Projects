@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.MovementType;
+import org.dawn.backend.constant.inventory.MovementType;
 
 
 @Data

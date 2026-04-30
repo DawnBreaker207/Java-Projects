@@ -3,7 +3,7 @@ package org.dawn.backend.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.ItemStatus;
+import org.dawn.backend.constant.catalog.ItemStatus;
 
 import java.math.BigDecimal;
 import java.time.Instant;

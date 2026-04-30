@@ -1,8 +1,8 @@
 package org.dawn.backend.repository.auth.Impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.response.PageResponse;
-import org.dawn.backend.constant.URole;
+import org.dawn.backend.config.web.response.PageResponse;
+import org.dawn.backend.constant.auth.URole;
 import org.dawn.backend.entity.Role;
 import org.dawn.backend.entity.User;
 import org.dawn.backend.repository.auth.UserRepository;

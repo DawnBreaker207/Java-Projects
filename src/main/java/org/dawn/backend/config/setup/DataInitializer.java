@@ -3,10 +3,10 @@ package org.dawn.backend.config.setup;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.sys.AppConfig;
+import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.config.security.hashing.PasswordEncoder;
-import org.dawn.backend.constant.Message;
-import org.dawn.backend.constant.URole;
+import org.dawn.backend.constant.system.Message;
+import org.dawn.backend.constant.auth.URole;
 import org.dawn.backend.entity.Role;
 import org.dawn.backend.entity.User;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;

@@ -1,6 +1,6 @@
 package org.dawn.backend.repository.auth;
 
-import org.dawn.backend.config.response.PageResponse;
+import org.dawn.backend.config.web.response.PageResponse;
 import org.dawn.backend.entity.User;
 import org.dawn.backend.repository.base.BaseRepository;
 

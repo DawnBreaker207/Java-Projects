@@ -2,8 +2,8 @@ package org.dawn.backend.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.OrderStatus;
-import org.dawn.backend.constant.PaymentMethod;
+import org.dawn.backend.constant.sales.OrderStatus;
+import org.dawn.backend.constant.sales.PaymentMethod;
 
 import java.math.BigDecimal;
 

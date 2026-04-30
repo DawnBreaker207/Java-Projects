@@ -1,6 +1,6 @@
 package org.dawn.backend.repository.catalog.Impl;
 
-import org.dawn.backend.constant.ProductStatus;
+import org.dawn.backend.constant.catalog.ProductStatus;
 import org.dawn.backend.entity.Category;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.repository.catalog.CategoryRepository;

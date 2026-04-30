@@ -5,8 +5,8 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.security.handler.SecurityHandler;
-import org.dawn.backend.service.RefreshTokenService;
+import org.dawn.backend.config.web.CorsConfig;
+import org.dawn.backend.service.auth.RefreshTokenService;
 
 import java.io.IOException;
 

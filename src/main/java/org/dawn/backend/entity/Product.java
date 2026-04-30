@@ -3,7 +3,7 @@ package org.dawn.backend.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.ProductStatus;
+import org.dawn.backend.constant.catalog.ProductStatus;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;

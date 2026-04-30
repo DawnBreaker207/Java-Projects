@@ -3,7 +3,7 @@ package org.dawn.backend.config.database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.sys.AppConfig;
+import org.dawn.backend.config.web.AppConfig;
 
 @Slf4j
 public class DatabaseConfig {

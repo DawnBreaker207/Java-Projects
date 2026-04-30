@@ -1,6 +1,6 @@
 package org.dawn.backend.repository.warranty;
 
-import org.dawn.backend.constant.WarrantyStatus;
+import org.dawn.backend.constant.warranty.WarrantyStatus;
 import org.dawn.backend.entity.Warranty;
 import org.dawn.backend.repository.base.BaseRepository;
 

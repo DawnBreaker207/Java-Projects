@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.URole;
+import org.dawn.backend.constant.auth.URole;
 
 @Data
 @NoArgsConstructor

@@ -1,8 +1,8 @@
 package org.dawn.backend.repository.catalog.Impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.constant.ItemStatus;
-import org.dawn.backend.constant.ProductStatus;
+import org.dawn.backend.constant.catalog.ItemStatus;
+import org.dawn.backend.constant.catalog.ProductStatus;
 import org.dawn.backend.entity.Category;
 import org.dawn.backend.entity.Product;
 import org.dawn.backend.entity.ProductItem;

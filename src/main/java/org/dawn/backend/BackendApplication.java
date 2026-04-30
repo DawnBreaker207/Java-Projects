@@ -8,9 +8,9 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.tomcat.util.descriptor.web.FilterDef;
 import org.apache.tomcat.util.descriptor.web.FilterMap;
 import org.dawn.backend.config.security.SecurityConfig;
-import org.dawn.backend.config.sys.ApiDispatcher;
-import org.dawn.backend.config.sys.AppConfig;
-import org.dawn.backend.config.sys.GlobalContextListener;
+import org.dawn.backend.config.web.ApiDispatcher;
+import org.dawn.backend.config.web.AppConfig;
+import org.dawn.backend.config.web.GlobalContextListener;
 import org.dawn.backend.exception.ApiExceptionHandler;
 
 

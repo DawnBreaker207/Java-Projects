@@ -1,8 +1,8 @@
 package org.dawn.backend.repository.sales.Impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.constant.OrderStatus;
-import org.dawn.backend.constant.PaymentMethod;
+import org.dawn.backend.constant.sales.OrderStatus;
+import org.dawn.backend.constant.sales.PaymentMethod;
 import org.dawn.backend.entity.Order;
 import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.base.AbstractRepository;

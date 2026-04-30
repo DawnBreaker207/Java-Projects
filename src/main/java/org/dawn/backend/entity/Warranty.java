@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
-import org.dawn.backend.constant.WarrantyStatus;
+import org.dawn.backend.constant.warranty.WarrantyStatus;
 
 import java.time.Instant;
 
