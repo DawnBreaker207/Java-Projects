@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.warranty;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
@@ -20,24 +21,24 @@ public class WarrantyController extends AbstractController {
     private final WarrantyService warrantyService;
 
     @Get("/")
-    public ResponseObject<List<WarrantyResponse>> getAll(HttpServletRequest req) {
+    public ResponseObject<List<WarrantyResponse>> getAll(HttpServletRequest req, HttpServletResponse res) {
         return ResponseObject.success(warrantyService.getAll());
     }
 
     @Get("/{id}")
-    public ResponseObject<WarrantyResponse> getOne(HttpServletRequest req) {
+    public ResponseObject<WarrantyResponse> getOne(HttpServletRequest req, HttpServletResponse res) {
         Long id = getPathId(req);
         return ResponseObject.success(warrantyService.getOne(id));
     }
 
     @Post("/create")
-    public ResponseObject<List<Warranty>> create(HttpServletRequest req) {
+    public ResponseObject<List<Warranty>> create(HttpServletRequest req, HttpServletResponse res) {
         CreateWarrantyRequest dto = body(req, CreateWarrantyRequest.class);
         return ResponseObject.created(warrantyService.createClaim(dto));
     }
 
     @Put("/update")
-    public ResponseObject<Warranty> update(HttpServletRequest req) {
+    public ResponseObject<Warranty> update(HttpServletRequest req, HttpServletResponse res) {
         UpdateWarrantyRequest dto = body(req, UpdateWarrantyRequest.class);
         return ResponseObject.success(warrantyService.updateStatus(dto));
     }

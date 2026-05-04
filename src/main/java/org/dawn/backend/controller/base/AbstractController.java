@@ -65,7 +65,13 @@ public abstract class AbstractController extends HttpServlet {
             Method method = routeMap.get(methodKey);
 
             if (method != null) {
-                Object result = method.invoke(this, req);
+                Object result;
+                if (method.getParameterCount() == 2) {
+                    result = method.invoke(this, req, res);
+
+                } else {
+                    result = method.invoke(this, req);
+                }
                 render(res, result);
             } else {
                 log.warn("No method found for key: {}", methodKey);

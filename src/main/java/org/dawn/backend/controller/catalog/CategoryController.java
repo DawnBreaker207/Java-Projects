@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.catalog;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
@@ -20,7 +21,7 @@ public class CategoryController extends AbstractController {
     private final CategoryService categoryService;
 
     @Get("/")
-    public ResponseObject<List<CategoryResponse>> getCategories(HttpServletRequest req) {
+    public ResponseObject<List<CategoryResponse>> getCategories(HttpServletRequest req, HttpServletResponse res) {
         checkRole(URole.ADMIN.name());
         int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "0");
         int size = Integer.parseInt(req.getParameter("size") != null ? req.getParameter("size") : "10");
@@ -28,20 +29,20 @@ public class CategoryController extends AbstractController {
     }
 
     @Get("/{id}")
-    public ResponseObject<CategoryResponse> getCategory(HttpServletRequest req) {
+    public ResponseObject<CategoryResponse> getCategory(HttpServletRequest req, HttpServletResponse res) {
 
         return ResponseObject.success(categoryService.getOne(getPathId(req)));
     }
 
     @Post("/")
-    public ResponseObject<CategoryResponse> addCategory(HttpServletRequest req) {
+    public ResponseObject<CategoryResponse> addCategory(HttpServletRequest req, HttpServletResponse res) {
         checkRole(URole.ADMIN.name());
         CategoryRequest dto = body(req, CategoryRequest.class);
         return ResponseObject.success(categoryService.create(dto));
     }
 
     @Put("/{id}")
-    public ResponseObject<CategoryResponse> updateCategory(HttpServletRequest req) {
+    public ResponseObject<CategoryResponse> updateCategory(HttpServletRequest req, HttpServletResponse res) {
         checkRole(URole.ADMIN.name());
         CategoryRequest dto = body(req, CategoryRequest.class);
         return ResponseObject.success(categoryService.updateCategory(getPathId(req), dto));

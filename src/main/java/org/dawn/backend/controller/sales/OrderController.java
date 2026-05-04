@@ -2,6 +2,7 @@ package org.dawn.backend.controller.sales;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -19,19 +20,19 @@ public class OrderController extends AbstractController {
     private final OrderService orderService;
 
     @Post("/create")
-    public ResponseObject<OrderResponse> create(HttpServletRequest req) {
+    public ResponseObject<OrderResponse> create(HttpServletRequest req, HttpServletResponse res) {
         OrderRequest dto = body(req, OrderRequest.class);
         return ResponseObject.created(orderService.create(dto));
     }
 
     @Post("/cancel/{id}")
-    public ResponseObject<OrderResponse> cancel(HttpServletRequest req) {
+    public ResponseObject<OrderResponse> cancel(HttpServletRequest req, HttpServletResponse res) {
         Long id = getPathId(req);
         return ResponseObject.created(orderService.cancelOrder(id));
     }
 
     @Post("/return/{id}")
-    public ResponseObject<?> refund(HttpServletRequest req) {
+    public ResponseObject<?> refund(HttpServletRequest req, HttpServletResponse res) {
         Long orderId = getPathId(req);
         if (orderId == null) {
             throw new ResourceNotFoundException(Message.Exception.ORDER_NOT_FOUND);

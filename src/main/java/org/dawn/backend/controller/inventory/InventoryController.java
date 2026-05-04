@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.inventory;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -12,12 +13,12 @@ public class InventoryController extends AbstractController {
     private final InventoryService inventoryService;
 
     @Post("/start")
-    public ResponseObject<Long> startSession(HttpServletRequest req) {
+    public ResponseObject<Long> startSession(HttpServletRequest req, HttpServletResponse res) {
         return ResponseObject.success(inventoryService.startSession());
     }
 
     @Post("/scan")
-    public ResponseObject<String> recordScan(HttpServletRequest req) {
+    public ResponseObject<String> recordScan(HttpServletRequest req, HttpServletResponse res) {
         Long sessionId = Long.valueOf(req.getParameter("sessionId"));
         String imei = req.getParameter("imei");
         Long actualLocId = Long.valueOf(req.getParameter("actualLocId"));
@@ -27,7 +28,7 @@ public class InventoryController extends AbstractController {
     }
 
     @Post("/complete")
-    public ResponseObject<String> completeSession(HttpServletRequest req) {
+    public ResponseObject<String> completeSession(HttpServletRequest req, HttpServletResponse res) {
         Long sessionId = Long.valueOf(req.getParameter("sessionId"));
         inventoryService.completeSession(sessionId);
         return ResponseObject.success("Inventory session completed and reconciled");

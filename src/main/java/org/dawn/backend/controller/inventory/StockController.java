@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.inventory;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -17,27 +18,27 @@ public class StockController extends AbstractController {
     private final StockService stockService;
 
     @Post("/import")
-    public ResponseObject<ProductResponse> importImei(HttpServletRequest req) {
+    public ResponseObject<ProductResponse> importImei(HttpServletRequest req, HttpServletResponse res) {
         ImportImeiRequest dto = body(req, ImportImeiRequest.class);
         return ResponseObject.success(stockService.importImei(dto));
     }
 
     @Post("/export")
-    public ResponseObject<ProductItemResponse> exportImei(HttpServletRequest req) {
+    public ResponseObject<ProductItemResponse> exportImei(HttpServletRequest req, HttpServletResponse res) {
         Long orderId = Long.valueOf(req.getParameter("orderId"));
         String imei = req.getParameter("imei");
         return ResponseObject.success(stockService.exportByImei(orderId, imei));
     }
 
     @Post("/mark-damaged")
-    public ResponseObject<ProductItemResponse> markDamaged(HttpServletRequest req) {
+    public ResponseObject<ProductItemResponse> markDamaged(HttpServletRequest req, HttpServletResponse res) {
         String imei = req.getParameter("imei");
         String reason = req.getParameter("reason");
         return ResponseObject.success(ProductMappingHelper.mapItem(stockService.markAsDamaged(imei, reason)));
     }
 
     @Post("/return-product")
-    public ResponseObject<ProductItemResponse> returnProduct(HttpServletRequest req) {
+    public ResponseObject<ProductItemResponse> returnProduct(HttpServletRequest req, HttpServletResponse res) {
         String imei = req.getParameter("imei");
         String reason = req.getParameter("reason");
         return ResponseObject.success(ProductMappingHelper.mapItem(stockService.returnProduct(imei, reason)));

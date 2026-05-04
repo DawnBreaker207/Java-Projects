@@ -147,7 +147,7 @@ public class GlobalContextListener implements ServletContextListener {
             DashboardController dashboardController = new DashboardController(dashboardService);
             OrderController orderController = new OrderController(orderService);
             WarehouseController warehouseController = new WarehouseController(warehouseService);
-            AuthController authController = new AuthController(authService);
+            AuthController authController = new AuthController(authService, jwtUtils);
             CloudinaryController cloudinaryController = new CloudinaryController(cloudinaryService);
             AiAgentController aiAgentController = new AiAgentController(aiAgentService);
             ProductController productController = new ProductController(productService);

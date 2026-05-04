@@ -2,6 +2,7 @@ package org.dawn.backend.controller.system;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -18,7 +19,7 @@ public class AuditLogController extends AbstractController {
 
     @Get("/")
     public ResponseObject<List<AuditLogResponse>> getLogs(
-            HttpServletRequest req) {
+            HttpServletRequest req, HttpServletResponse res) {
         checkRole("ADMIN");
 
         String userId = query(req, "userId");

@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.catalog;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
@@ -20,25 +21,25 @@ public class SupplierController extends AbstractController {
     private final SupplierService supplierService;
 
     @Get("/")
-    public ResponseObject<List<SupplierResponse>> getAll(HttpServletRequest req) {
+    public ResponseObject<List<SupplierResponse>> getAll(HttpServletRequest req, HttpServletResponse res) {
         return ResponseObject.success(supplierService.getAll());
     }
 
     @Get("/{id}")
-    public ResponseObject<SupplierResponse> getOne(HttpServletRequest req) {
+    public ResponseObject<SupplierResponse> getOne(HttpServletRequest req, HttpServletResponse res) {
         Long id = getPathId(req);
         return ResponseObject.success(supplierService.getOne(id));
     }
 
     @Post("/")
-    public ResponseObject<SupplierResponse> create(HttpServletRequest req) {
+    public ResponseObject<SupplierResponse> create(HttpServletRequest req, HttpServletResponse res) {
         checkRole(URole.ADMIN.name());
         SupplierRequest dto = body(req, SupplierRequest.class);
         return ResponseObject.created(supplierService.create(dto));
     }
 
     @Put("/{id}")
-    public ResponseObject<SupplierResponse> update(HttpServletRequest req) {
+    public ResponseObject<SupplierResponse> update(HttpServletRequest req, HttpServletResponse res) {
         checkRole(URole.ADMIN.name());
         Long id = getPathId(req);
         SupplierUpdateRequest dto = body(req, SupplierUpdateRequest.class);

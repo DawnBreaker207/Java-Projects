@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.system;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,7 @@ public class CloudinaryController extends AbstractController {
     private final CloudinaryService cloudinaryService;
 
     @Post("/upload")
-    public ResponseObject<?> uploadImage(HttpServletRequest req) {
+    public ResponseObject<?> uploadImage(HttpServletRequest req, HttpServletResponse res) {
         try {
             Part filePart = req.getPart("image");
             if(filePart == null){

@@ -2,6 +2,7 @@ package org.dawn.backend.controller.inventory;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
@@ -21,13 +22,13 @@ public class WarehouseController extends AbstractController {
     private final WarehouseService warehouseService;
 
     @Post("/create")
-    public ResponseObject<WarehouseResponse> create(HttpServletRequest req) {
+    public ResponseObject<WarehouseResponse> create(HttpServletRequest req, HttpServletResponse res) {
         WarehouseRequest dto = body(req, WarehouseRequest.class);
         return ResponseObject.success(warehouseService.createWarehouse(dto));
     }
 
     @Post("/setup-layout")
-    public ResponseObject<String> setupLayout(HttpServletRequest req) {
+    public ResponseObject<String> setupLayout(HttpServletRequest req, HttpServletResponse res) {
         Long warehouseId = Long.valueOf(req.getParameter("warehouseId"));
         String zone = req.getParameter("zone");
         String row = req.getParameter("row");
@@ -39,7 +40,7 @@ public class WarehouseController extends AbstractController {
     }
 
     @Post("/move-item")
-    public ResponseObject<String> moveItem(HttpServletRequest req) {
+    public ResponseObject<String> moveItem(HttpServletRequest req, HttpServletResponse res) {
         String imei = req.getParameter("imei");
         Long targetLocId = Long.valueOf(req.getParameter("targetLocId"));
 
@@ -48,12 +49,12 @@ public class WarehouseController extends AbstractController {
     }
 
     @Get("/map")
-    public ResponseObject<List<WarehouseResponse>> getMap(HttpServletRequest req) {
+    public ResponseObject<List<WarehouseResponse>> getMap(HttpServletRequest req, HttpServletResponse res) {
         return ResponseObject.success(warehouseService.getPhysicalMap());
     }
 
     @Get("/available-bins")
-    public ResponseObject<List<WarehouseLocationResponse>> getAvailableBins(HttpServletRequest req) {
+    public ResponseObject<List<WarehouseLocationResponse>> getAvailableBins(HttpServletRequest req, HttpServletResponse res) {
         Long warehouseId = Long.valueOf(req.getParameter("warehouseId"));
         return ResponseObject.success(warehouseService.getAvailableBins(warehouseId));
     }

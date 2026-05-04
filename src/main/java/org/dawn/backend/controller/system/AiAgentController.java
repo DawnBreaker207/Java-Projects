@@ -1,6 +1,7 @@
 package org.dawn.backend.controller.system;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -13,7 +14,7 @@ public class AiAgentController extends AbstractController {
     private final AiAgentService agentService;
 
     @Post("/chat")
-    public ResponseObject<String> chat(HttpServletRequest req) {
+    public ResponseObject<String> chat(HttpServletRequest req, HttpServletResponse res) {
         String sessionId = req.getSession().getId();
         ChatRequest dto = body(req, ChatRequest.class);
         String answer = agentService.chat(sessionId, dto.getMessage());
@@ -21,7 +22,7 @@ public class AiAgentController extends AbstractController {
     }
 
     @Post("/suggest")
-    public ResponseObject<String> suggest(HttpServletRequest req) {
+    public ResponseObject<String> suggest(HttpServletRequest req, HttpServletResponse res) {
         ChatRequest dto = body(req, ChatRequest.class);
         String answer = agentService.suggest(dto.getMessage());
         return ResponseObject.success(answer);
