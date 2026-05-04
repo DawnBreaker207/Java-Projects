@@ -27,6 +27,8 @@ public class DataInitializer {
     public void run() {
         try {
             createAdminAccountIfNotExist();
+            createStockAccountIfNotExist();
+            createSaleAccountIfNotExist();
         } catch (Exception e) {
             log.error("Error initializing setup account", e);
         }
@@ -34,10 +36,10 @@ public class DataInitializer {
 
     //    Note: This just for demo, don't use this in production
     private void createAdminAccountIfNotExist() {
-        String adminUsername = AppConfig.get("setup.admin.username");
-        String adminPassword = AppConfig.get("setup.admin.password");
-        if (userRepository.existsByUserName(adminUsername)) {
-            log.info("Admin account '{}' already exists. Skipping initialization.", adminUsername);
+        String username = AppConfig.get("setup.admin.username");
+        String password = AppConfig.get("setup.admin.password");
+        if (userRepository.existsByUserName(username)) {
+            log.info("Admin account '{}' already exists. Skipping initialization.", username);
             return;
         }
 
@@ -48,8 +50,8 @@ public class DataInitializer {
 
         User user = User
                 .builder()
-                .username(adminUsername)
-                .password(passwordEncoder.encode(adminPassword))
+                .username(username)
+                .password(passwordEncoder.encode(password))
                 .role(role)
                 .isDeleted(false)
                 .build();
@@ -58,8 +60,69 @@ public class DataInitializer {
 
         log.info("========================================");
         log.info("   DEMO ADMIN ACCOUNT CREATED");
-        log.info("   Username: {}", adminUsername);
-        log.info("   Password: {}", adminPassword);
+        log.info("   Username: {}", username);
+        log.info("   Password: {}", password);
+        log.info("========================================");
+    }
+
+    private void createStockAccountIfNotExist() {
+        String username = AppConfig.get("setup.stock.username");
+        String password = AppConfig.get("setup.stock.password");
+        if (userRepository.existsByUserName(username)) {
+            log.info("Stock account '{}' already exists. Skipping initialization.", username);
+            return;
+        }
+
+        Role role = roleRepository
+                .findByName(URole.STOCK)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Message.Exception.ROLE_NOT_FOUND));
+
+        User user = User
+                .builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .isDeleted(false)
+                .build();
+
+        userRepository.save(user);
+
+        log.info("========================================");
+        log.info("   DEMO STOCK ACCOUNT CREATED");
+        log.info("   Username: {}", username);
+        log.info("   Password: {}", password);
+        log.info("========================================");
+    }
+
+
+    private void createSaleAccountIfNotExist() {
+        String username = AppConfig.get("setup.sale.username");
+        String password = AppConfig.get("setup.sale.password");
+        if (userRepository.existsByUserName(username)) {
+            log.info("sale account '{}' already exists. Skipping initialization.", username);
+            return;
+        }
+
+        Role role = roleRepository
+                .findByName(URole.SALES)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(Message.Exception.ROLE_NOT_FOUND));
+
+        User user = User
+                .builder()
+                .username(username)
+                .password(passwordEncoder.encode(password))
+                .role(role)
+                .isDeleted(false)
+                .build();
+
+        userRepository.save(user);
+
+        log.info("========================================");
+        log.info("   DEMO SALE ACCOUNT CREATED");
+        log.info("   Username: {}", username);
+        log.info("   Password: {}", password);
         log.info("========================================");
     }
 }
