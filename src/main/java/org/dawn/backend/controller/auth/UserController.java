@@ -22,6 +22,7 @@ public class UserController extends AbstractController {
 
     @Get("/")
     public ResponseObject<ResponsePage<UserResponse>> getAll(HttpServletRequest req) {
+        checkRole(URole.ADMIN.name());
         int page = Integer.parseInt(req.getParameter("page") != null ? req.getParameter("page") : "0");
         int size = Integer.parseInt(req.getParameter("size") != null ? req.getParameter("size") : "10");
 
@@ -31,11 +32,13 @@ public class UserController extends AbstractController {
 
     @Get("/{id}")
     public ResponseObject<UserResponse> getOne(HttpServletRequest req) {
+        checkRole(URole.ADMIN.name());
         return ResponseObject.success(userService.findOne(getPathId(req)));
     }
 
     @Post("/")
     public ResponseObject<UserResponse> create(HttpServletRequest req) {
+        checkRole(URole.ADMIN.name());
         RegisterRequest dto = body(req, RegisterRequest.class);
         return ResponseObject.created(userService.createUser(dto));
     }
@@ -49,6 +52,7 @@ public class UserController extends AbstractController {
 
     @Put("/{id}/status")
     public ResponseObject<UserResponse> updateStatus(HttpServletRequest req) throws Exception {
+        checkRole(URole.ADMIN.name());
         Long id = getPathId(req);
         Boolean status = body(req, Boolean.class);
         return ResponseObject.success(userService.updateStatus(id, status));
@@ -56,6 +60,7 @@ public class UserController extends AbstractController {
 
     @Put("/{id}/status")
     public ResponseObject<UserResponse> updateRole(HttpServletRequest req) throws Exception {
+        checkRole(URole.ADMIN.name());
         Long id = getPathId(req);
         URole role = body(req, URole.class);
         return ResponseObject.success(userService.updateRole(id, role));

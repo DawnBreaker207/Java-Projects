@@ -6,6 +6,7 @@ import org.dawn.backend.config.web.annotation.Get;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.annotation.Put;
 import org.dawn.backend.config.web.response.ResponseObject;
+import org.dawn.backend.constant.auth.URole;
 import org.dawn.backend.controller.base.AbstractController;
 import org.dawn.backend.dto.catalog.SupplierRequest;
 import org.dawn.backend.dto.catalog.SupplierResponse;
@@ -31,12 +32,14 @@ public class SupplierController extends AbstractController {
 
     @Post("/")
     public ResponseObject<SupplierResponse> create(HttpServletRequest req) {
+        checkRole(URole.ADMIN.name());
         SupplierRequest dto = body(req, SupplierRequest.class);
         return ResponseObject.created(supplierService.create(dto));
     }
 
     @Put("/{id}")
     public ResponseObject<SupplierResponse> update(HttpServletRequest req) {
+        checkRole(URole.ADMIN.name());
         Long id = getPathId(req);
         SupplierUpdateRequest dto = body(req, SupplierUpdateRequest.class);
         return ResponseObject.created(supplierService.update(id, dto));
