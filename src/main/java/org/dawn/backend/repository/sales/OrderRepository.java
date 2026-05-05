@@ -12,6 +12,8 @@ public interface OrderRepository extends BaseRepository<Order, Long> {
 
     List<Order> search(String status, LocalDateTime startDate, LocalDateTime endDate, int page, int size);
 
+    long countSearch(String status, LocalDateTime startDate, LocalDateTime endDate);
+
     List<Order> findByStatus(OrderStatus status);
 
     List<Order> findByStatusOrderByCreatedAtAsc(OrderStatus status);

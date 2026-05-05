@@ -10,6 +10,10 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class WarehouseLocationResponse {
+    private Long id;
+
+    private Long warehouseId;
+
     private String zoneName;
 
     private String rowNum;

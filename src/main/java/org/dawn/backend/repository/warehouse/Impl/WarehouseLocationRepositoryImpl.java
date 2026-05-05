@@ -45,6 +45,21 @@ public class WarehouseLocationRepositoryImpl extends AbstractRepository<Warehous
     }
 
     @Override
+    public List<WarehouseLocation> findEmptyLocationsByWarehouseId(Long warehouseId) {
+        String sql = """
+                SELECT * FROM warehouse_locations
+                WHERE warehouse_id = ?
+                  AND id NOT IN (
+                    SELECT location_id FROM product_items
+                    WHERE status = 'AVAILABLE' AND location_id IS NOT NULL
+                  )
+                ORDER BY id ASC
+                """;
+
+        return queryList(sql, this::mapResultSet, warehouseId);
+    }
+
+    @Override
     public void saveAll(List<WarehouseLocation> entities) {
         String sql = """
                 INSERT INTO warehouse_locations (warehouse_id, zone_name, row_num, shelf_num, bin_num)

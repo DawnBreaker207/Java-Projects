@@ -70,7 +70,7 @@ public class CategoryService {
             existing.setName(req.getName());
             existing.setDescription(req.getDescription());
             auditLogService.saveLog(
-                    LogConstant.Action.CREATE_CATEGORY,
+                    LogConstant.Action.UPDATE_CATEGORY,
                     LogConstant.Entity.CATEGORY,
                     existing.getId().toString(),
                     LogConstant.Status.SUCCESS,
