@@ -65,6 +65,34 @@ public class OrderRepositoryImpl extends AbstractRepository<Order, Long> impleme
     }
 
     @Override
+    public long countSearch(String status, LocalDateTime startDate, LocalDateTime endDate) {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(*) FROM orders o WHERE 1=1");
+        List<Object> params = new ArrayList<>();
+        if (status != null && !status.isBlank()) {
+            sql.append(" AND o.status = ?");
+            params.add(status);
+        }
+        if (startDate != null) {
+            sql.append(" AND o.created_at >= ?");
+            params.add(Timestamp.valueOf(startDate));
+        }
+        if (endDate != null) {
+            sql.append(" AND o.created_at <= ?");
+            params.add(Timestamp.valueOf(endDate));
+        }
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) ps.setObject(i + 1, params.get(i));
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getLong(1);
+            }
+        } catch (SQLException e) {
+            log.error("Error countSearch orders", e);
+        }
+        return 0L;
+    }
+
+    @Override
     public List<Order> findAll() {
         String sql = """
                 SELECT o.*, c.full_name AS cus_name, c.phone_number AS cus_phone

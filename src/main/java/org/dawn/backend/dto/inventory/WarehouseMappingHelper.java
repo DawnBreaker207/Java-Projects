@@ -29,6 +29,8 @@ public interface WarehouseMappingHelper {
     static WarehouseLocationResponse mapItem(WarehouseLocation item) {
         return WarehouseLocationResponse
                 .builder()
+                .id(item.getId())
+                .warehouseId(item.getWarehouseId())
                 .zoneName(item.getZoneName())
                 .rowNum(item.getRowNum())
                 .shelfNum(item.getShelfNum())

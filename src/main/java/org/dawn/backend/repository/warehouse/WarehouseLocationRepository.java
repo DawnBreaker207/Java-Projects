@@ -12,4 +12,6 @@ public interface WarehouseLocationRepository extends BaseRepository<WarehouseLoc
     List<WarehouseLocation> findByWarehouseId(Long warehouseId);
 
     List<WarehouseLocation> findEmptyLocations();
+
+    List<WarehouseLocation> findEmptyLocationsByWarehouseId(Long warehouseId);
 }

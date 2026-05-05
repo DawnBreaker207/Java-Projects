@@ -42,21 +42,24 @@ public class OrderService {
     private final AuditLogService auditLogService;
     private final TransactionManager manager;
 
-    public List<OrderResponse> getAll(String status,
-                                      LocalDateTime startDate,
-                                      LocalDateTime endDate,
-                                      int page,
-                                      int size) {
-        return orderRepository.search(
-                        status,
-                        startDate,
-                        endDate,
-                        page,
-                        size)
-                .stream()
-                .map(OrderMappingHelper::map)
-                .toList();
-
+    public org.dawn.backend.config.web.response.ResponsePage<OrderResponse> getAll(
+            String status,
+            LocalDateTime startDate,
+            LocalDateTime endDate,
+            int page,
+            int size) {
+        List<Order> rows = orderRepository.search(status, startDate, endDate, page, size);
+        long total = orderRepository.countSearch(status, startDate, endDate);
+        int totalPages = size > 0 ? (int) ((total + size - 1) / size) : 0;
+        org.dawn.backend.config.web.response.PageResponse<OrderResponse> pageRes =
+                org.dawn.backend.config.web.response.PageResponse.<OrderResponse>builder()
+                        .content(rows.stream().map(OrderMappingHelper::map).toList())
+                        .totalElements(total)
+                        .totalPages(totalPages)
+                        .number(page)
+                        .size(size)
+                        .build();
+        return org.dawn.backend.config.web.response.ResponsePage.of(pageRes);
     }
 
     public OrderResponse create(OrderRequest req) {

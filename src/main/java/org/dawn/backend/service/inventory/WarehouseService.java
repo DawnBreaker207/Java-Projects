@@ -77,7 +77,16 @@ public class WarehouseService {
                     .findByImei(imei)
                     .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.PRODUCT_ITEM_NOT_FOUND));
 
+            // Validate target bin exists
+            locationRepository
+                    .findById(targetLocId)
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Target location " + targetLocId + " does not exist"));
+
             Long oldLocId = item.getLocationId();
+            if (targetLocId.equals(oldLocId)) {
+                throw new RuntimeException("Item is already at location " + targetLocId);
+            }
             item.setLocationId(targetLocId);
             itemRepository.save(item);
 
@@ -103,7 +112,7 @@ public class WarehouseService {
 
     public List<WarehouseLocationResponse> getAvailableBins(Long warehouseId) {
         return locationRepository
-                .findEmptyLocations()
+                .findEmptyLocationsByWarehouseId(warehouseId)
                 .stream()
                 .map(WarehouseMappingHelper::mapItem)
                 .toList();

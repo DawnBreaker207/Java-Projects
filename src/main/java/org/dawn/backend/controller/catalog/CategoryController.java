@@ -48,4 +48,11 @@ public class CategoryController extends AbstractController {
         return ResponseObject.success(categoryService.updateCategory(getPathId(req), dto));
     }
 
+    @Put("/{id}/status")
+    public ResponseObject<CategoryResponse> updateStatus(HttpServletRequest req, HttpServletResponse res) {
+        checkRole(URole.ADMIN.name());
+        Boolean isDeleted = body(req, Boolean.class);
+        return ResponseObject.success(categoryService.updateStatus(getPathId(req), isDeleted));
+    }
+
 }
