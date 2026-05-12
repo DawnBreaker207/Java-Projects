@@ -315,7 +315,7 @@ const KhoHangPage = () => {
           </Space>
         )}
         width={600} open={drawerOpen} onClose={() => setDrawerOpen(false)}
-        extra={<Button icon={<EditOutlined />} onClick={() => { setDrawerOpen(false); drawerItem && openEdit(drawerItem) }}>Sửa</Button>}
+        extra={<Button icon={<EditOutlined />} onClick={() => { setDrawerOpen(false); if (drawerItem) openEdit(drawerItem) }}>Sửa</Button>}
       >
         {drawerItem && (
           <Tabs defaultActiveKey='info' items={[
