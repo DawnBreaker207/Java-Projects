@@ -41,5 +41,7 @@ public class ProductResponse extends BaseResponse {
 
     private Boolean isDeleted;
 
+    private Boolean hasImei;
+
     private List<ProductItemResponse> items;
 }

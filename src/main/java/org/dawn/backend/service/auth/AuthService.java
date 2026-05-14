@@ -4,17 +4,11 @@ package org.dawn.backend.service.auth;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dawn.backend.config.database.TransactionManager;
-import org.dawn.backend.config.integration.EmailService;
 import org.dawn.backend.config.security.hashing.PasswordEncoder;
 import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
-import org.dawn.backend.dto.auth.ChangePasswordRequest;
-import org.dawn.backend.dto.auth.ForgotPasswordRequest;
-import org.dawn.backend.dto.auth.LoginRequest;
-import org.dawn.backend.dto.auth.JwtResponse;
-import org.dawn.backend.dto.auth.ResetPasswordTokenRequest;
-import org.dawn.backend.dto.auth.TokenRefreshResponse;
+import org.dawn.backend.dto.auth.*;
 import org.dawn.backend.entity.PasswordResetToken;
 import org.dawn.backend.entity.RefreshToken;
 import org.dawn.backend.entity.User;
@@ -23,6 +17,7 @@ import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.repository.auth.PasswordResetTokenRepository;
 import org.dawn.backend.repository.auth.UserRepository;
 import org.dawn.backend.service.system.AuditLogService;
+import org.dawn.backend.service.system.MailService;
 import org.dawn.backend.utils.JWTUtils;
 import org.dawn.backend.utils.UserUtils;
 
@@ -41,7 +36,7 @@ public class AuthService {
     private final AuditLogService auditLogService;
     private final TransactionManager manager;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
-    private final EmailService emailService;
+    private final MailService mailService;
 
     public JwtResponse login(LoginRequest req) {
 
@@ -153,7 +148,7 @@ public class AuthService {
         if (frontendUrl == null || frontendUrl.isBlank()) frontendUrl = "http://localhost:5173";
         String resetLink = frontendUrl + "/reset-password?token=" + token;
 
-        emailService.sendPasswordResetEmail(email.trim(), user.getFullName(), resetLink);
+        mailService.sendPasswordResetMail(email.trim(), user.getFullName(), resetLink);
 
         auditLogService.saveLog(
                 user.getId(),

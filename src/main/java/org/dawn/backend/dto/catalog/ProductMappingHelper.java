@@ -50,6 +50,7 @@ public interface ProductMappingHelper {
                 .minThreshold(req.getMinThreshold())
                 .specifications(req.getSpecifications())
                 .isDeleted(req.getIsDeleted())
+                .hasImei(req.getHasImei())
                 .status(req.getStatus())
                 .items(req
                         .getItems()
