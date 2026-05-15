@@ -1,25 +1,26 @@
 import { useState } from 'react'
-import { Outlet, useNavigate, useLocation } from 'react-router-dom'
-import { App, Avatar, Button, Dropdown, Form, Input, Layout, Menu, Modal, Typography, theme } from 'antd'
+import { Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { App, Avatar, Button, Dropdown, Form, Input, Layout, Menu, Modal, theme, Typography } from 'antd'
 import {
-  LogoutOutlined,
-  UserOutlined,
-  DashboardOutlined,
   AppstoreOutlined,
-  ImportOutlined,
-  ExportOutlined,
   BarChartOutlined,
-  TeamOutlined,
-  InboxOutlined,
   BarcodeOutlined,
+  DashboardOutlined,
+  EnvironmentOutlined,
+  ExportOutlined,
+  HistoryOutlined,
+  ImportOutlined,
+  InboxOutlined,
+  KeyOutlined,
+  LogoutOutlined,
   SafetyCertificateOutlined,
+  ScanOutlined,
+  SearchOutlined,
   ShopOutlined,
   ShoppingCartOutlined,
-  SearchOutlined,
-  WarningOutlined,
-  KeyOutlined,
-  ScanOutlined,
-  EnvironmentOutlined
+  TeamOutlined,
+  UserOutlined,
+  WarningOutlined
 } from '@ant-design/icons'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { clearCredentials } from '@/features/auth/authSlice'
@@ -85,7 +86,8 @@ const ALL_MENU: MenuItem[] = [
     icon: <TeamOutlined />,
     children: [
       { key: '/nhan-vien', label: 'Nhân viên', icon: <TeamOutlined />, roles: ['ADMIN'] },
-      { key: '/in-barcode', label: 'In Barcode', icon: <BarcodeOutlined /> }
+      { key: '/in-barcode', label: 'In Barcode', icon: <BarcodeOutlined /> },
+      { key: '/logs', label: 'Logs', icon: <HistoryOutlined />, roles: ['ADMIN'] }
     ]
   }
 ]
