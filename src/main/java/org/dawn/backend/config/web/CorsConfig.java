@@ -24,7 +24,7 @@ public class CorsConfig {
 
         String origin = req.getHeader("Origin");
 
-        if (origin != null && ALLOWED_DOMAINS.contains(origin)) {
+        if (origin != null) {
             res.setHeader("Access-Control-Allow-Origin", origin);
         }
 
@@ -33,6 +33,10 @@ public class CorsConfig {
         res.setHeader("Access-Control-Allow-Credentials", "true");
         res.setHeader("Access-Control-Max-Age", "3600");
 
-        return "OPTIONS".equalsIgnoreCase(req.getMethod());
+        if ("OPTIONS".equalsIgnoreCase(req.getMethod())) {
+            res.setStatus(HttpServletResponse.SC_OK);
+            return true;
+        }
+        return false;
     }
 }
