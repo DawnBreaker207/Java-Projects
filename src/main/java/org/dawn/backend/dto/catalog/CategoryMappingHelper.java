@@ -20,6 +20,7 @@ public interface CategoryMappingHelper {
                         .stream()
                         .map(ProductMappingHelper::map)
                         .toList())
+                .isDeleted(req.getIsDeleted())
                 .createdAt(req.getCreatedAt())
                 .updatedAt(req.getUpdatedAt())
                 .build();

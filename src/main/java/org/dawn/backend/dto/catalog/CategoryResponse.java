@@ -22,5 +22,7 @@ public class CategoryResponse extends BaseResponse {
 
     private String description;
 
+    private Boolean isDeleted;
+
     private List<ProductResponse> items;
 }
