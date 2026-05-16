@@ -75,6 +75,7 @@ export interface Supplier {
   address: string | null
   taxCode: string | null
   isDeleted?: boolean
+  status?: 'ACTIVE' | 'INACTIVE'
   createdAt: string
   updatedAt: string
 }
@@ -189,10 +190,12 @@ export interface SupplierRequest {
   email?: string
   address?: string
   taxCode?: string
+  status?: 'ACTIVE' | 'INACTIVE'
 }
 
 export type SupplierUpdateRequest = Partial<SupplierRequest> & {
   isDeleted?: boolean
+  status?: 'ACTIVE' | 'INACTIVE'
 }
 
 export interface ImportImeiRequest {

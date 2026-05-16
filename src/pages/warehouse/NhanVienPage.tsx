@@ -202,7 +202,7 @@ const NhanVienPage = () => {
     },
     {
       title: t('col.resetPwd'), key: 'resetPwd', width: 100,
-      render: (_, r: User) => r.isPasswordReset
+      render: (_, r: User) => !r.isPasswordReset
         ? <Tag color='orange'>{t('statusBadge.reset')}</Tag>
         : <Tag>{t('statusBadge.notReset')}</Tag>,
     },

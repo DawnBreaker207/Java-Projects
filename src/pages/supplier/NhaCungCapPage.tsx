@@ -1,7 +1,19 @@
 import { useState, useMemo } from 'react'
 import {
-  App, Button, Card, Col, Form, Input, Modal, Row,
-  Space, Statistic, Table, Tag, Tooltip, Typography,
+  App,
+  Button,
+  Card,
+  Col,
+  Form,
+  Input,
+  Modal,
+  Row,
+  Space,
+  Statistic,
+  Table,
+  Tag,
+  Tooltip,
+  Typography
 } from 'antd'
 import type { ColumnsType } from 'antd/es/table'
 import { PlusOutlined, EditOutlined, ShopOutlined, DeleteOutlined, UndoOutlined } from '@ant-design/icons'
@@ -11,7 +23,7 @@ import EmptyState from '@/components/shared/EmptyState'
 import {
   useGetSuppliersQuery,
   useCreateSupplierMutation,
-  useUpdateSupplierMutation,
+  useUpdateSupplierMutation
 } from '@/features/supplier/supplierApi'
 import { useLocaleFormat } from '@/utils/useLocaleFormat'
 import type { Supplier, SupplierRequest } from '@/types/api'
@@ -37,17 +49,18 @@ const NhaCungCapPage = () => {
   const [updateSupplier, { isLoading: updating }] = useUpdateSupplierMutation()
 
   const filtered = useMemo(
-    () => suppliers.filter((s) => {
-      if (!showDeleted && s.isDeleted) return false
-      if (!search) return true
-      const q = search.toLowerCase()
-      return (
-        s.name.toLowerCase().includes(q) ||
-        (s.phoneNumber ?? '').toLowerCase().includes(q) ||
-        (s.taxCode ?? '').toLowerCase().includes(q)
-      )
-    }),
-    [suppliers, search, showDeleted],
+    () =>
+      suppliers.filter((s) => {
+        if (!showDeleted && s.isDeleted) return false
+        if (!search) return true
+        const q = search.toLowerCase()
+        return (
+          s.name.toLowerCase().includes(q) ||
+          (s.phoneNumber ?? '').toLowerCase().includes(q) ||
+          (s.taxCode ?? '').toLowerCase().includes(q)
+        )
+      }),
+    [suppliers, search, showDeleted]
   )
 
   const handleSoftDelete = (record: Supplier) => {
@@ -63,24 +76,31 @@ const NhaCungCapPage = () => {
         try {
           await updateSupplier({
             id: record.id,
-            data: { isDeleted: !record.isDeleted },
+            data: { isDeleted: !record.isDeleted, status: record.status }
           }).unwrap()
           void message.success(record.isDeleted ? t('softDelete.successRestore') : t('softDelete.successHide'))
         } catch (err: unknown) {
           const e = err as { data?: { message?: string } }
           void message.error(e?.data?.message ?? t('common:error.system'))
         }
-      },
+      }
     })
   }
 
-  const openAdd = () => { setEditItem(null); form.resetFields(); setModalOpen(true) }
+  const openAdd = () => {
+    setEditItem(null)
+    form.resetFields()
+    setModalOpen(true)
+  }
   const openEdit = (r: Supplier) => {
     setEditItem(r)
     form.setFieldsValue({
-      name: r.name, contactPerson: r.contactPerson ?? '',
-      phoneNumber: r.phoneNumber ?? '', email: r.email ?? '',
-      address: r.address ?? '', taxCode: r.taxCode ?? '',
+      name: r.name,
+      contactPerson: r.contactPerson ?? '',
+      phoneNumber: r.phoneNumber ?? '',
+      email: r.email ?? '',
+      address: r.address ?? '',
+      taxCode: r.taxCode ?? ''
     })
     setModalOpen(true)
   }
@@ -89,10 +109,10 @@ const NhaCungCapPage = () => {
     form.validateFields().then(async (values) => {
       try {
         if (editItem) {
-          await updateSupplier({ id: editItem.id, data: values }).unwrap()
+          await updateSupplier({ id: editItem.id, data: { ...values, status: editItem.status } }).unwrap()
           void message.success(t('modal.successEdit'))
         } else {
-          await createSupplier(values).unwrap()
+          await createSupplier({ ...values, status: 'ACTIVE' }).unwrap()
           void message.success(t('modal.successAdd'))
         }
         setModalOpen(false)
@@ -106,47 +126,103 @@ const NhaCungCapPage = () => {
   const columns: ColumnsType<Supplier> = [
     { title: t('col.no'), key: 'stt', width: 55, render: (_, __, i) => <Text type='secondary'>{i + 1}</Text> },
     {
-      title: t('col.name'), dataIndex: 'name', key: 'name',
+      title: t('col.name'),
+      dataIndex: 'name',
+      key: 'name',
       render: (v: string) => (
         <Space>
-          <div style={{ width: 32, height: 32, borderRadius: 8, background: `${PRIMARY}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 8,
+              background: `${PRIMARY}18`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}
+          >
             <ShopOutlined style={{ color: PRIMARY }} />
           </div>
           <Text strong>{v}</Text>
         </Space>
-      ),
-    },
-    { title: t('col.contact'), dataIndex: 'contactPerson', key: 'contact', width: 150, render: (v: string | null) => v ?? '—' },
-    { title: t('col.phone'), dataIndex: 'phoneNumber', key: 'phone', width: 130, render: (v: string | null) => v ?? '—' },
-    { title: t('col.email'), dataIndex: 'email', key: 'email', ellipsis: true, render: (v: string | null) => <Text type='secondary'>{v ?? '—'}</Text> },
-    { title: t('col.address'), dataIndex: 'address', key: 'address', ellipsis: true, render: (v: string | null) => <Text type='secondary'>{v ?? '—'}</Text> },
-    {
-      title: t('col.taxCode'), dataIndex: 'taxCode', key: 'tax', width: 130,
-      render: (v: string | null) => v ? <Tag>{v}</Tag> : <Text type='secondary'>—</Text>,
+      )
     },
     {
-      title: t('col.createdAt'), dataIndex: 'createdAt', key: 'created', width: 120,
-      render: (v: string) => <Text style={{ fontSize: 12 }}>{date(v)}</Text>,
+      title: t('col.contact'),
+      dataIndex: 'contactPerson',
+      key: 'contact',
+      width: 150,
+      render: (v: string | null) => v ?? '—'
     },
     {
-      title: t('col.actions'), key: 'action', width: 110,
-      render: (_, record) => canManage ? (
-        <Space size={2}>
-          <Tooltip title={t('tooltip.edit')}>
-            <Button type='text' size='small' icon={<EditOutlined style={{ color: '#1677ff' }} />}
-              onClick={() => openEdit(record)} disabled={record.isDeleted} />
-          </Tooltip>
-          <Tooltip title={record.isDeleted ? t('tooltip.restore') : t('tooltip.hide')}>
-            <Button
-              type='text' size='small'
-              icon={record.isDeleted
-                ? <UndoOutlined style={{ color: '#52c41a' }} />
-                : <DeleteOutlined style={{ color: '#ff4d4f' }} />}
-              onClick={() => handleSoftDelete(record)} />
-          </Tooltip>
-        </Space>
-      ) : null,
+      title: t('col.phone'),
+      dataIndex: 'phoneNumber',
+      key: 'phone',
+      width: 130,
+      render: (v: string | null) => v ?? '—'
     },
+    {
+      title: t('col.email'),
+      dataIndex: 'email',
+      key: 'email',
+      ellipsis: true,
+      render: (v: string | null) => <Text type='secondary'>{v ?? '—'}</Text>
+    },
+    {
+      title: t('col.address'),
+      dataIndex: 'address',
+      key: 'address',
+      ellipsis: true,
+      render: (v: string | null) => <Text type='secondary'>{v ?? '—'}</Text>
+    },
+    {
+      title: t('col.taxCode'),
+      dataIndex: 'taxCode',
+      key: 'tax',
+      width: 130,
+      render: (v: string | null) => (v ? <Tag>{v}</Tag> : <Text type='secondary'>—</Text>)
+    },
+    {
+      title: t('col.createdAt'),
+      dataIndex: 'createdAt',
+      key: 'created',
+      width: 120,
+      render: (v: string) => <Text style={{ fontSize: 12 }}>{date(v)}</Text>
+    },
+    {
+      title: t('col.actions'),
+      key: 'action',
+      width: 110,
+      render: (_, record) =>
+        canManage ? (
+          <Space size={2}>
+            <Tooltip title={t('tooltip.edit')}>
+              <Button
+                type='text'
+                size='small'
+                icon={<EditOutlined style={{ color: '#1677ff' }} />}
+                onClick={() => openEdit(record)}
+                disabled={record.isDeleted}
+              />
+            </Tooltip>
+            <Tooltip title={record.isDeleted ? t('tooltip.restore') : t('tooltip.hide')}>
+              <Button
+                type='text'
+                size='small'
+                icon={
+                  record.isDeleted ? (
+                    <UndoOutlined style={{ color: '#52c41a' }} />
+                  ) : (
+                    <DeleteOutlined style={{ color: '#ff4d4f' }} />
+                  )
+                }
+                onClick={() => handleSoftDelete(record)}
+              />
+            </Tooltip>
+          </Space>
+        ) : null
+    }
   ]
 
   return (
@@ -154,24 +230,37 @@ const NhaCungCapPage = () => {
       <PageHeader
         title={t('title')}
         subtitle={t('subtitle')}
-        extra={canManage ? (
-          <Button type='primary' icon={<PlusOutlined />} onClick={openAdd}>{t('addButton')}</Button>
-        ) : undefined}
+        extra={
+          canManage ? (
+            <Button type='primary' icon={<PlusOutlined />} onClick={openAdd}>
+              {t('addButton')}
+            </Button>
+          ) : undefined
+        }
       />
 
       <Row gutter={[16, 16]} style={{ marginBottom: 20 }}>
         <Col xs={24} sm={8}>
           <Card style={{ borderRadius: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
-            <Statistic title={t('stats.total')} value={suppliers.length}
-              suffix={t('stats.totalSuffix')} valueStyle={{ color: PRIMARY, fontWeight: 700 }} />
+            <Statistic
+              title={t('stats.total')}
+              value={suppliers.length}
+              suffix={t('stats.totalSuffix')}
+              valueStyle={{ color: PRIMARY, fontWeight: 700 }}
+            />
           </Card>
         </Col>
       </Row>
 
       <Card style={{ borderRadius: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
         <div style={{ marginBottom: 16, display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-          <Input.Search placeholder={t('filter.search')} style={{ width: 300 }}
-            value={search} onChange={(e) => setSearch(e.target.value)} allowClear />
+          <Input.Search
+            placeholder={t('filter.search')}
+            style={{ width: 300 }}
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            allowClear
+          />
           {canManage && (
             <Button
               type={showDeleted ? 'primary' : 'default'}
@@ -184,21 +273,37 @@ const NhaCungCapPage = () => {
           )}
         </div>
         <Table
-          rowKey='id' loading={isLoading} columns={columns} dataSource={filtered}
-          size='middle' bordered scroll={{ x: 1000 }}
+          rowKey='id'
+          loading={isLoading}
+          columns={columns}
+          dataSource={filtered}
+          size='middle'
+          bordered
+          scroll={{ x: 1000 }}
           pagination={{ pageSize: 10, showTotal: (total) => t('totalSuffix', { count: total }) }}
-          locale={{ emptyText: <EmptyState title={t('empty')} action={canManage ? { label: t('addButton'), onClick: openAdd } : undefined} /> }}
+          locale={{
+            emptyText: (
+              <EmptyState
+                title={t('empty')}
+                action={canManage ? { label: t('addButton'), onClick: openAdd } : undefined}
+              />
+            )
+          }}
         />
       </Card>
 
       <Modal
         title={editItem ? t('modal.titleEdit') : t('modal.titleAdd')}
-        open={modalOpen} onCancel={() => setModalOpen(false)} width={600}
+        open={modalOpen}
+        onCancel={() => setModalOpen(false)}
+        width={600}
         footer={[
-          <Button key='c' onClick={() => setModalOpen(false)}>{t('common:button.cancel')}</Button>,
+          <Button key='c' onClick={() => setModalOpen(false)}>
+            {t('common:button.cancel')}
+          </Button>,
           <Button key='s' type='primary' loading={creating || updating} onClick={handleSave}>
             {editItem ? t('common:button.update') : t('common:button.add')}
-          </Button>,
+          </Button>
         ]}
       >
         <Form form={form} layout='vertical' style={{ marginTop: 16 }}>
