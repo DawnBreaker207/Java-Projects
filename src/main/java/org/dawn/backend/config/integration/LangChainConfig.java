@@ -27,6 +27,7 @@ public class LangChainConfig {
                     .maxTokens(4000)
                     .logRequests(true)
                     .logResponses(true)
+                    .responseFormat("json_object")
                     .build();
 
             ChatMemoryProvider memoryProvider = sessionId ->
