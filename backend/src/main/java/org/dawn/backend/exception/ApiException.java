@@ -1,18 +1,20 @@
 package org.dawn.backend.exception;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
+
 @Getter
 public class ApiException extends RuntimeException {
-    private final HttpStatus status;
+    private final int status;
+    private final Object[] args;
 
-    public ApiException(String message) {
-        super(message);
-        this.status = HttpStatus.BAD_REQUEST;
-    }
 
-    public ApiException(HttpStatus status, String message) {
+    public ApiException(int status, String message, Object... args) {
         super(message);
         this.status = status;
+        this.args = args;
+    }
+
+    public ApiException(String message) {
+        this(400, message);
     }
 }
