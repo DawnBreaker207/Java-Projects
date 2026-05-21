@@ -17,13 +17,15 @@ pipeline {
         stage('Deploy') {
             steps {
                 withCredentials([file(credentialsId: 'infra-env', variable: 'ENV_FILE')]) {
-                    sh """
-                        cp $ENV_FILE infra/.env
-                        cd infra
-                        docker compose down
-                        docker compose build --no-cache
-                        docker compose up -d
-                    """
+                    sh '''
+                      ls -la infra/
+                      cp "$ENV_FILE" infra/.env
+                      ls -la infra/
+                      cd infra
+                      docker compose down
+                      docker compose build --no-cache
+                      docker compose up -d
+                        '''
                 }
             }
         }
