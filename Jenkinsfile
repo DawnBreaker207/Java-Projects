@@ -22,7 +22,7 @@ pipeline {
                       cp "$ENV_FILE" infra/.env
                       ls -la infra/
                       cd infra
-                      docker compose down
+                      docker compose down --remove-orphans
                       docker compose build --no-cache
                       docker compose up -d --build --quiet-pull
                         '''
