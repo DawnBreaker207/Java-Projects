@@ -80,8 +80,10 @@
     "legendAvailable": "Trống",
     "legendOccupied": "Đã có hàng",
     "legendSelected": "Đã chọn",
+    "legendFull": "Đã Đầy",
     "binTooltipAvailable": "{{label}} — Trống",
     "binTooltipOccupied": "{{label}} — {{count}} sản phẩm",
-    "binPopoverTitle": "Bin {{label}}"
+    "binPopoverTitle": "Bin {{label}}",
+    "tooltipEmpty": "Trống"
   }
 }
