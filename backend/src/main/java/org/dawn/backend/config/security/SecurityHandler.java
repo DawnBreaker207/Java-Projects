@@ -7,9 +7,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.service.auth.RefreshTokenService;
 import org.dawn.backend.utils.JWTUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -21,7 +21,8 @@ public class SecurityHandler {
 
     private final ObjectMapper objectMapper;
     private final JWTUtils jwtUtils;
-    private final String jwtRefreshCookie = AppConfig.get("app.jwtRefreshCookieName");
+    @Value("${app.jwtRefreshCookieName}")
+    private String jwtRefreshCookie;
 
     public void handle(HttpServletResponse res, int status, String message) throws IOException {
 

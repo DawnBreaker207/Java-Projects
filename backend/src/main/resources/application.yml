@@ -1,0 +1,44 @@
+server:
+  port: 8888
+  servlet:
+    context-path: /api/v1
+spring:
+  config:
+    import: "optional:file:.env[.properties]"
+# Database
+db:
+  url: ${DB_URL}
+  user: ${DB_USER}
+  pass: ${DB_PASS}
+  driver: ${DB_DRIVER}
+# JWT config
+app:
+  jwtCookieName: ${JWT_COOKIE_NAME}
+  jwtRefreshCookieName: ${JWT_COOKIE_REFRESH_NAME}
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationsMs: ${JWT_EXPIRATION}
+  jwtRefreshExpirationsMs: ${JWT_REFRESH_EXPIRATION}
+  # Frontend URL (cho reset password link)
+  frontendUrl: ${FRONTEND_URL}
+# Flyway
+flyway:
+  locations: classpath:db/migration
+# Config Cloudinary
+cloudinary:
+  folderName: ${CLOUDINARY_FOLDER_NAME}
+  cloudName: ${CLOUDINARY_CLOUD_NAME}
+  apiKey: ${CLOUDINARY_API_KEY}
+  apiSecret: ${CLOUDINARY_API_SECRET}
+# Open Router
+openRouter:
+  url: ${OPEN_ROUTER_URL}
+  api: ${OPEN_ROUTER_API}
+  model: ${OPEN_ROUTER_MODEL}
+# Mail
+mail:
+  enabled: ${MAIL_ENABLED}
+  host: ${MAIL_HOST}
+  port: ${MAIL_PORT}
+  username: ${MAIL_USERNAME}
+  password: ${MAIL_PASSWORD}
+  from: ${MAIL_FROM}

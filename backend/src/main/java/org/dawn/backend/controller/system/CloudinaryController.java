@@ -9,10 +9,14 @@ import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.response.ResponseObject;
 import org.dawn.backend.controller.base.AbstractController;
 import org.dawn.backend.service.system.CloudinaryService;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@RestController
+@RequestMapping("/cloudinary")
 @RequiredArgsConstructor
 @Slf4j
-public class CloudinaryController extends AbstractController {
+public class CloudinaryController {
 
     private final CloudinaryService cloudinaryService;
 
@@ -20,7 +24,7 @@ public class CloudinaryController extends AbstractController {
     public ResponseObject<?> uploadImage(HttpServletRequest req, HttpServletResponse res) {
         try {
             Part filePart = req.getPart("image");
-            if(filePart == null){
+            if (filePart == null) {
                 return ResponseObject.error(400, "No image part found");
             }
 

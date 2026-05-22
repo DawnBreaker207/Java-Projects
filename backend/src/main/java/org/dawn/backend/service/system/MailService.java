@@ -5,13 +5,12 @@ import jakarta.mail.Session;
 import jakarta.mail.Transport;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.config.web.MailConfig;
 import org.dawn.backend.config.web.TemplateConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
@@ -19,27 +18,33 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
+@Service
 public class MailService {
     private static MailService instance;
-    private final TemplateEngine template = TemplateConfig.getEngine();
-    private final Session session = MailConfig.getSession();
+    private TemplateEngine template;
+    private final Session session;
 
-    private static final String mailUsername = AppConfig.get("mail.username");
-    private static final String mailFrom = AppConfig.get("mail.from");
-    private static final boolean enabled = Boolean.parseBoolean(AppConfig.get("mail.enabled"));
+    private final String mailUsername;
+    private final String mailFrom;
+    private final boolean enabled;
 
-    static {
-
-        if (!enabled) {
-            log.info("Mail Service is running in DEV mode (Email is not send)");
+    @Autowired
+    public MailService(MailConfig mailConfig,
+                       @Value("${mail.username}") String mailUsername,
+                       @Value("${mail.from}") String mailFrom,
+                       @Value("${mail.enabled:false}") boolean enabled) {
+        this.template = TemplateConfig.getEngine();
+        this.session = mailConfig.getSession();
+        this.mailUsername = mailUsername;
+        this.mailFrom = mailFrom;
+        this.enabled = enabled;
+        if (!this.enabled) {
+            log.info("Mail Service is running in DEV mode (Email is not sent)");
         }
     }
 
-    private MailService() {
-    }
-
     public void sendHtmlMail(String to, String subject, String templateName, Map<String, Object> variables) {
-        log.info("Check enable config: {}", AppConfig.get("mail.enabled"));
+        log.info("Check enable config: {}", enabled);
         log.info("Check enable : {}", enabled);
         if (!enabled) {
             log.info("[DEV] pass out sending mail. Send to: {} | Title: {} | Data: {}", to, subject, variables);
@@ -73,9 +78,5 @@ public class MailService {
         sendHtmlMail(to, "Đặt lại mật khẩu", "password-reset", variables);
     }
 
-    public static synchronized MailService getInstance() {
-        if (instance == null) instance = new MailService();
-        return instance;
-    }
 
 }

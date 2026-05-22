@@ -5,9 +5,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.security.UserPrincipal;
 import org.dawn.backend.config.security.UserRoleSecurity;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.config.web.annotation.Post;
 import org.dawn.backend.config.web.annotation.Put;
 import org.dawn.backend.config.web.response.ResponseObject;
@@ -15,6 +15,7 @@ import org.dawn.backend.controller.base.AbstractController;
 import org.dawn.backend.dto.auth.*;
 import org.dawn.backend.service.auth.AuthService;
 import org.dawn.backend.utils.JWTUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 
 @RequiredArgsConstructor
@@ -23,6 +24,8 @@ public class AuthController extends AbstractController {
 
     private final AuthService authService;
     private final JWTUtils jwtUtils;
+    @Value("${app.jwtRefreshCookieName}")
+    private String jwtRefreshCookieName;
 
     @Post("/login")
     public ResponseObject<JwtResponse> login(HttpServletRequest req, HttpServletResponse res) {
@@ -36,7 +39,7 @@ public class AuthController extends AbstractController {
 
     @Post("/refresh-token")
     public ResponseObject<TokenRefreshResponse> refreshToken(HttpServletRequest req, HttpServletResponse res) {
-        String refreshToken = getCookie(req, AppConfig.get("app.jwtRefreshCookieName"));
+        String refreshToken = getCookie(req, jwtRefreshCookieName);
         log.info("Nhận được refresh token từ cookie: {}", (refreshToken != null ? "Có dữ liệu" : "NULL"));
         return ResponseObject.success(authService.refreshToken(refreshToken));
 
@@ -46,7 +49,8 @@ public class AuthController extends AbstractController {
     public ResponseObject<String> resetPassword(HttpServletRequest req, HttpServletResponse res) {
         Long id = getPathId(req);
         UserRoleSecurity.authorize(id);
-        return ResponseObject.success(authService.resetPassword(id, currentUser().username()));
+        String username = SecurityContext.get().username();
+        return ResponseObject.success(authService.resetPassword(id, username));
     }
 
     @Post("/forgot-password")

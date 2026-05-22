@@ -1,18 +1,27 @@
 package org.dawn.backend.config.database;
 
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.web.AppConfig;
 import org.flywaydb.core.Flyway;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import javax.sql.DataSource;
 
 @Slf4j
+@Configuration
 public class FlywayConfig {
 
-    public static void migrate() {
+    @Value("${flyway.locations}")
+    private String location;
+
+    @Bean
+    public Flyway flyway(DataSource dataSource) {
         log.info("Starting Flyway Migration...");
         Flyway flyway = Flyway
                 .configure()
-                .dataSource(DatabaseConfig.getDataSource())
-                .locations(AppConfig.get("flyway.locations"))
+                .dataSource(dataSource)
+                .locations(location)
                 .baselineOnMigrate(true)
                 .baselineVersion("0")
                 .load();
@@ -25,5 +34,6 @@ public class FlywayConfig {
             flyway.repair();
         }
         log.info("Flyway Migration completed successfully");
+        return flyway;
     }
 }

@@ -4,8 +4,9 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.constant.system.Message;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.Map;
@@ -13,9 +14,11 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class CloudinaryService {
 
-    private String folderName = AppConfig.get("cloudinary.folderName");
+    @Value("${cloudinary.folderName}")
+    private String folderName;
 
     private final Cloudinary cloudinary;
 

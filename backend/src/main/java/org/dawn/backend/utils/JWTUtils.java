@@ -8,7 +8,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.web.AppConfig;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -17,15 +17,20 @@ import java.util.Date;
 @Slf4j
 public class JWTUtils {
 
-    private final String jwtSecret = AppConfig.get("app.jwtSecret");
+    @Value("${app.jwtSecret}")
+    private String jwtSecret;
 
-    private final int jwtExpirations = Integer.parseInt(AppConfig.get("app.jwtExpirationsMs"));
+    @Value("${app.jwtExpirationsMs}")
+    private int jwtExpirations;
 
-    private final int refreshTokenExpirations = Integer.parseInt(AppConfig.get("app.jwtRefreshExpirationsMs"));
+    @Value("${app.jwtRefreshExpirationsMs}")
+    private int refreshTokenExpirations;
 
-    private final String jwtCookie = AppConfig.get("app.jwtCookieName");
+    @Value("${app.jwtCookieName}")
+    private String jwtCookie;
 
-    private final String jwtRefreshCookie = AppConfig.get("app.jwtRefreshCookieName");
+    @Value("${app.jwtRefreshCookieName}")
+    private String jwtRefreshCookie;
 
     private final String endpoint = "/api/v1/auth/refresh-token";
 

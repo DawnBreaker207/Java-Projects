@@ -78,6 +78,8 @@ import org.dawn.backend.service.system.CloudinaryService;
 import org.dawn.backend.service.system.MailService;
 import org.dawn.backend.service.warranty.WarrantyService;
 import org.dawn.backend.utils.JWTUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.sql.DataSource;
 import java.util.concurrent.ExecutorService;
@@ -88,14 +90,12 @@ import java.util.concurrent.Executors;
 public class GlobalContextListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
-
+        WebApplicationContext springContext = WebApplicationContextUtils.getWebApplicationContext(sce.getServletContext());
         log.info("Backend Application is starting up...");
         try {
-            Cloudinary cloudinary = CloudinaryConfig.getConfig();
 
             // Database & Migration
             DataSource datasource = DatabaseConfig.getDataSource();
-            FlywayConfig.migrate();
             TransactionManager transactionManager = new TransactionManager(datasource);
             // Repository JDBC
             AuditLogRepository auditLogRepository = new AuditLogRepositoryImpl(datasource);
@@ -129,9 +129,9 @@ public class GlobalContextListener implements ServletContextListener {
             CorsConfig corsConfig = new CorsConfig();
 
             // Service
-            MailService mailService = MailService.getInstance();
+            MailService mailService = springContext.getBean(MailService.class);
+            AiAgentService aiAgentService = springContext.getBean(AiAgentService.class);
             PasswordEncoder passwordEncoder = new BCryptPasswordEncoderImpl();
-            CloudinaryService cloudinaryService = new CloudinaryService(cloudinary);
             AuditLogService auditLogService = new AuditLogService(auditLogRepository, transactionManager);
             SupplierService supplierService = new SupplierService(auditLogService, supplierRepository, transactionManager);
             RefreshTokenService refreshTokenService = new RefreshTokenService(refreshTokenRepository, userRepository, transactionManager);
@@ -146,7 +146,6 @@ public class GlobalContextListener implements ServletContextListener {
             CustomerService customerService = new CustomerService(customerRepository);
             CategoryService categoryService = new CategoryService(categoryRepository, auditLogService, transactionManager);
             WarrantyService warrantyService = new WarrantyService(warrantyRepository, productItemRepository, orderRepository, auditLogService, stockService, transactionManager);
-            AiAgentService aiAgentService = LangChainConfig.getAssistant();
             // Controller
             UserController userController = new UserController(userService);
             AuditLogController auditLogController = new AuditLogController(auditLogService);
@@ -157,7 +156,6 @@ public class GlobalContextListener implements ServletContextListener {
             OrderController orderController = new OrderController(orderService);
             WarehouseController warehouseController = new WarehouseController(warehouseService);
             AuthController authController = new AuthController(authService, jwtUtils);
-            CloudinaryController cloudinaryController = new CloudinaryController(cloudinaryService);
             AiAgentController aiAgentController = new AiAgentController(aiAgentService);
             ProductController productController = new ProductController(productService);
             InventoryController inventoryController = new InventoryController(inventoryService);
@@ -177,7 +175,6 @@ public class GlobalContextListener implements ServletContextListener {
             ctx.setAttribute("authController", authController);
             ctx.setAttribute("categoryController", categoryController);
             ctx.setAttribute("customerController", customerController);
-            ctx.setAttribute("cloudinaryController", cloudinaryController);
             ctx.setAttribute("dashboardController", dashboardController);
             ctx.setAttribute("inventoryController", inventoryController);
             ctx.setAttribute("stockController", stockController);

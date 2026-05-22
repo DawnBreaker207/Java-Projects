@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dawn.backend.config.database.TransactionManager;
 import org.dawn.backend.config.security.hashing.PasswordEncoder;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.dto.auth.*;
@@ -20,6 +19,7 @@ import org.dawn.backend.service.system.AuditLogService;
 import org.dawn.backend.service.system.MailService;
 import org.dawn.backend.utils.JWTUtils;
 import org.dawn.backend.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -29,6 +29,8 @@ import java.util.UUID;
 @Slf4j
 public class AuthService {
 
+    @Value("${app.frontendUrl}")
+    String frontendUrl;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
@@ -149,7 +151,7 @@ public class AuthService {
                 .expiryDate(expiry)
                 .build());
 
-        String frontendUrl = AppConfig.get("app.frontendUrl");
+
         if (frontendUrl == null || frontendUrl.isBlank()) frontendUrl = "http://localhost:5173";
         String resetLink = frontendUrl + "/reset-password?token=" + token;
 

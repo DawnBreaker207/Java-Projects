@@ -4,19 +4,26 @@ import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.service.AiServices;
-import org.dawn.backend.config.web.AppConfig;
 import org.dawn.backend.service.system.AiAgentService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.Duration;
 
+@Configuration
 public class LangChainConfig {
     private static AiAgentService assistant;
 
-    private static final String modeUrl = AppConfig.get("openRouter.url");
-    private static final String modeApi = AppConfig.get("openRouter.api");
-    private static final String modeType = AppConfig.get("openRouter.model");
+    @Value("${openRouter.url}")
+    private String modeUrl;
+    @Value("${openRouter.api}")
+    private String modeApi;
+    @Value("${openRouter.model}")
+    private String modeType;
 
-    public static AiAgentService getAssistant() {
+    @Bean
+    public AiAgentService getAssistant() {
         if (assistant == null) {
             OpenAiChatModel model = OpenAiChatModel
                     .builder()
