@@ -5,7 +5,6 @@ import type { LocationItemMini, WarehouseLocationResponse } from '@/types/api'
 
 const { Text } = Typography
 const PRIMARY = '#E8603C'
-
 const ItemList = ({ items }: { items: LocationItemMini[] }) => (
   <div style={{ maxWidth: 260 }}>
     {items.map((it) => (
@@ -24,11 +23,12 @@ const ItemList = ({ items }: { items: LocationItemMini[] }) => (
 
 interface BinPickerGridProps {
   bins: WarehouseLocationResponse[]
+  selectedProductId?: number
   value?: number
   onChange?: (id: number) => void
   compact?: boolean
 }
-const BinPickerGrid = ({ bins, value, onChange, compact }: BinPickerGridProps) => {
+const BinPickerGrid = ({ bins, selectedProductId, value, onChange, compact }: BinPickerGridProps) => {
   const { t } = useTranslation('warehouse')
 
   const grouped = useMemo(() => {
@@ -51,22 +51,24 @@ const BinPickerGrid = ({ bins, value, onChange, compact }: BinPickerGridProps) =
     const isSelected = value === b.id
     const isFull = b.items.length >= b.capacity
     const isEmpty = b.items.length === 0
+    const isConflict = !isEmpty && selectedProductId != null && b.items.some((i) => i.productId !== selectedProductId)
+    const isDisabled = isFull || isConflict
     const label = `S${b.shelfNum}-B${b.binNum}`
 
     const button = (
       <button
         key={b.id}
         type='button'
-        disabled={isFull}
-        onClick={() => !isFull && onChange?.(b.id)}
+        disabled={isDisabled}
+        onClick={() => !isDisabled && onChange?.(b.id)}
         style={{
           minWidth: compact ? 56 : 68,
           padding: compact ? '4px 6px' : '6px 8px',
           borderRadius: 6,
-          cursor: isFull ? 'not-allowed' : 'pointer',
-          background: isSelected ? PRIMARY : isFull ? '#fff1f0' : isEmpty ? '#f6ffed' : '#fff7e6',
-          color: isSelected ? '#fff' : isFull ? '#cf1322' : isEmpty ? '#389e0d' : '#d46b08',
-          border: `1px solid ${isSelected ? PRIMARY : isFull ? '#ffa39e' : isEmpty ? '#b7eb8f' : '#ffd591'}`,
+          cursor: isDisabled ? 'not-allowed' : 'pointer',
+          background: isSelected ? PRIMARY : isDisabled ? '#fff1f0' : isEmpty ? '#f6ffed' : '#fff7e6',
+          color: isSelected ? '#fff' : isDisabled ? '#cf1322' : isEmpty ? '#389e0d' : '#d46b08',
+          border: `1px solid ${isSelected ? PRIMARY : isDisabled ? '#ffa39e' : isEmpty ? '#b7eb8f' : '#ffd591'}`,
           fontFamily: 'monospace',
           fontSize: compact ? 10 : 11,
           fontWeight: isSelected ? 700 : 500,
@@ -81,7 +83,7 @@ const BinPickerGrid = ({ bins, value, onChange, compact }: BinPickerGridProps) =
               marginLeft: 3,
               padding: '0 4px',
               borderRadius: 8,
-              background: isSelected ? '#fff' : isFull ? '#cf1322' : '#d46b08',
+              background: isSelected ? '#fff' : isDisabled ? '#cf1322' : '#d46b08',
               color: isSelected ? PRIMARY : '#fff',
               fontSize: 9,
               fontWeight: 700
@@ -98,7 +100,21 @@ const BinPickerGrid = ({ bins, value, onChange, compact }: BinPickerGridProps) =
         <Popover
           key={b.id}
           placement='top'
-          title={t('binPicker.binPopoverTitle', { label })}
+          title={
+            <span>
+              {label}
+              {isConflict && (
+                <Tag color='red' style={{ marginLeft: 6, fontSize: 10 }}>
+                  {t('binPicker.conflict')}
+                </Tag>
+              )}
+              {isFull && (
+                <Tag color='volcano' style={{ marginLeft: 6, fontSize: 10 }}>
+                  {t('binPicker.full')}
+                </Tag>
+              )}
+            </span>
+          }
           content={<ItemList items={b.items} />}
         >
           {button}
@@ -114,6 +130,7 @@ const BinPickerGrid = ({ bins, value, onChange, compact }: BinPickerGridProps) =
         <Tag color='green'>{t('binPicker.legendAvailable')}</Tag>
         <Tag color='orange'>{t('binPicker.legendOccupied')}</Tag>
         <Tag color='red'>{t('binPicker.legendFull')}</Tag>
+        <Tag color='red'>{t('binPicker.legendConflict')}</Tag>
         <Tag style={{ background: PRIMARY, color: '#fff', border: 'none' }}>{t('binPicker.legendSelected')}</Tag>
       </div>
       <Tabs

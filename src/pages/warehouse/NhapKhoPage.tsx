@@ -328,7 +328,7 @@ const NhapKhoPage = () => {
                 name='locationId'
                 rules={[{ required: true, message: t('import.locationRequired') }]}
               >
-                <BinPickerGrid bins={warehouseLocations} compact />
+                <BinPickerGrid bins={warehouseLocations} selectedProductId={selectedProduct?.id} compact />
               </Form.Item>
 
               {selectedProduct?.hasImei && (
