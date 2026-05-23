@@ -2,7 +2,7 @@ package org.dawn.backend.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.web.response.PageResponse;
 import org.dawn.backend.config.web.response.ResponsePage;
@@ -40,7 +40,7 @@ public class UserService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuditLogService auditLogService;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public ResponsePage<UserResponse> findAll(int page, int size) {
         PageResponse<User> users = userRepository.findAll(page, size);

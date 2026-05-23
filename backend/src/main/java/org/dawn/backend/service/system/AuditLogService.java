@@ -3,7 +3,7 @@ package org.dawn.backend.service.system;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.security.UserPrincipal;
 import org.dawn.backend.dto.system.AuditLogResponse;
@@ -21,7 +21,7 @@ import java.util.List;
 public class AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public List<AuditLogResponse> searchLogs(
             String userId,

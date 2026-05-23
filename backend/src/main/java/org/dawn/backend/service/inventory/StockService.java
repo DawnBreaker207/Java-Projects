@@ -2,7 +2,7 @@ package org.dawn.backend.service.inventory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.security.UserPrincipal;
 import org.dawn.backend.constant.catalog.ItemStatus;
@@ -48,7 +48,7 @@ public class StockService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final AuditLogService auditLogService;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
     private final WarehouseLocationRepository locationRepository;
     private final SupplierRepository supplierRepository;
 

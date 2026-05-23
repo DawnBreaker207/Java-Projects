@@ -2,7 +2,7 @@ package org.dawn.backend.service.inventory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.security.UserPrincipal;
 import org.dawn.backend.constant.inventory.DetailStatus;
@@ -44,7 +44,7 @@ public class InventoryService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseLocationRepository locationRepository;
     private final UserRepository userRepository;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public InventorySessionResponse startSession(Long warehouseId) {
         return manager.execute(() -> {

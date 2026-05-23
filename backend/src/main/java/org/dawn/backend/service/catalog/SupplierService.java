@@ -1,8 +1,7 @@
 package org.dawn.backend.service.catalog;
 
 import lombok.RequiredArgsConstructor;
-import org.dawn.backend.config.database.TransactionManager;
-import org.dawn.backend.constant.system.ActiveStatus;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.dto.catalog.SupplierMappingHelper;
@@ -23,7 +22,7 @@ import java.util.List;
 public class SupplierService {
     private final AuditLogService auditLogService;
     private final SupplierRepository supplierRepository;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public List<SupplierResponse> getAll() {
         return supplierRepository

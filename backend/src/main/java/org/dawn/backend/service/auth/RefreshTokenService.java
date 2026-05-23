@@ -1,7 +1,7 @@
 package org.dawn.backend.service.auth;
 
 import lombok.RequiredArgsConstructor;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.entity.RefreshToken;
 import org.dawn.backend.entity.User;
@@ -25,7 +25,7 @@ public class RefreshTokenService {
     private Long refreshTokenDurations;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
 
     public RefreshToken createRefreshToken(Long userId) {

@@ -3,7 +3,7 @@ package org.dawn.backend.service.inventory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
@@ -35,7 +35,7 @@ public class WarehouseService {
     private final StockService stockService;
     private final AuditLogService auditLogService;
     private final ProductItemRepository itemRepository;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public WarehouseResponse createWarehouse(WarehouseRequest warehouse) {
         return manager.execute(() -> {

@@ -3,7 +3,7 @@ package org.dawn.backend.service.sales;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
+import org.dawn.backend.config.database.JDBCTransactionManager;
 import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.config.security.UserPrincipal;
 import org.dawn.backend.constant.catalog.ItemStatus;
@@ -43,7 +43,7 @@ public class OrderService {
     private final CustomerRepository customerRepository;
     private final StockService stockService;
     private final AuditLogService auditLogService;
-    private final TransactionManager manager;
+    private final JDBCTransactionManager manager;
 
     public org.dawn.backend.config.web.response.ResponsePage<OrderResponse> getAll(
             String status,
