@@ -27,6 +27,7 @@ import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.warehouse.StockMovementRepository;
 import org.dawn.backend.repository.warehouse.WarehouseLocationRepository;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class StockService {
 
     private final ProductRepository productRepository;

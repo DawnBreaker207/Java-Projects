@@ -25,6 +25,7 @@ import org.dawn.backend.repository.sales.OrderItemRepository;
 import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.service.inventory.StockService;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.text.MessageFormat;
@@ -33,6 +34,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
@@ -233,6 +235,10 @@ public class OrderService {
 
     public void returnOrder(Long orderId, RefundRequest req) {
         manager.execute(() -> {
+            if (orderId == null) {
+                throw new ResourceNotFoundException(Message.Exception.ORDER_NOT_FOUND);
+            }
+
             if (req.getImeis() == null || req.getImeis().isEmpty()) {
                 throw new RuntimeException(Message.Exception.RETURN_IMEI_LIST_EMPTY);
             }

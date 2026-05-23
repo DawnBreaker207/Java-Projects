@@ -24,6 +24,7 @@ import org.dawn.backend.repository.warehouse.InventoryDetailRepository;
 import org.dawn.backend.repository.warehouse.InventorySessionRepository;
 import org.dawn.backend.repository.warehouse.WarehouseLocationRepository;
 import org.dawn.backend.repository.warehouse.WarehouseRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class InventoryService {
     private final InventorySessionRepository sessionRepository;
     private final InventoryDetailRepository detailRepository;

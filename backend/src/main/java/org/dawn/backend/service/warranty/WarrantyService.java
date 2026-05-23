@@ -20,6 +20,7 @@ import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.warranty.WarrantyRepository;
 import org.dawn.backend.service.inventory.StockService;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.time.Instant;
@@ -28,6 +29,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class WarrantyService {
     private final WarrantyRepository warrantyRepository;
     private final ProductItemRepository itemRepository;

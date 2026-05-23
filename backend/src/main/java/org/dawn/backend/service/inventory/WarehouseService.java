@@ -20,6 +20,7 @@ import org.dawn.backend.repository.catalog.ProductItemRepository;
 import org.dawn.backend.repository.warehouse.WarehouseLocationRepository;
 import org.dawn.backend.repository.warehouse.WarehouseRepository;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class WarehouseService {
     private final WarehouseRepository warehouseRepository;
     private final WarehouseLocationRepository locationRepository;

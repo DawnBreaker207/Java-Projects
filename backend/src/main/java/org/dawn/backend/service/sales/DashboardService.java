@@ -15,12 +15,14 @@ import org.dawn.backend.repository.sales.OrderRepository;
 import org.dawn.backend.repository.system.AuditLogRepository;
 import org.dawn.backend.repository.warehouse.WarehouseLocationRepository;
 import org.dawn.backend.repository.warranty.WarrantyRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
+@Service
 public class DashboardService {
     private final ProductRepository productRepository;
 

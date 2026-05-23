@@ -9,12 +9,14 @@ import org.dawn.backend.config.security.SecurityContext;
 import org.dawn.backend.constant.auth.URole;
 import org.dawn.backend.dto.catalog.ProductResponse;
 import org.dawn.backend.entity.ProductItem;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class AnalyticService {
     private final DashboardService dashboardService;
     private final ObjectMapper objectMapper = new ObjectMapper();

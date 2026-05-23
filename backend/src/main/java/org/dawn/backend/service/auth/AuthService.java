@@ -20,11 +20,13 @@ import org.dawn.backend.service.system.MailService;
 import org.dawn.backend.utils.JWTUtils;
 import org.dawn.backend.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
@@ -36,7 +38,6 @@ public class AuthService {
     private final JWTUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
     private final AuditLogService auditLogService;
-    private final TransactionManager manager;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final MailService mailService;
 

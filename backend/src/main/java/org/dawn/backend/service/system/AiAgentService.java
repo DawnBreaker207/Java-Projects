@@ -6,6 +6,7 @@ import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
 import org.dawn.backend.dto.system.ChatResponse;
+import org.springframework.stereotype.Service;
 
 public interface AiAgentService {
 

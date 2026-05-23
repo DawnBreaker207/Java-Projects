@@ -14,11 +14,13 @@ import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.dto.catalog.ProductMappingHelper;
 import org.dawn.backend.repository.catalog.ProductRepository;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class ProductService {
 
     private final AuditLogService auditLogService;

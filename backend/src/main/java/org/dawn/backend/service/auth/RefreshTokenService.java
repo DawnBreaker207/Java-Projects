@@ -10,12 +10,14 @@ import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.repository.auth.RefreshTokenRepository;
 import org.dawn.backend.repository.auth.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
 @RequiredArgsConstructor
+@Service
 public class RefreshTokenService {
 
 

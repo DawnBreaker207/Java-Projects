@@ -26,12 +26,14 @@ import org.dawn.backend.repository.auth.RoleRepository;
 import org.dawn.backend.repository.auth.UserRepository;
 import org.dawn.backend.service.system.AuditLogService;
 import org.dawn.backend.utils.UserUtils;
+import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class UserService {
 
     private final UserRepository userRepository;

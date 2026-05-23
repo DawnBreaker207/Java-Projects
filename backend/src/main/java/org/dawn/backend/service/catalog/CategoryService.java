@@ -12,10 +12,12 @@ import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.dto.catalog.CategoryMappingHelper;
 import org.dawn.backend.repository.catalog.CategoryRepository;
 import org.dawn.backend.service.system.AuditLogService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @RequiredArgsConstructor
+@Service
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final AuditLogService auditLogService;

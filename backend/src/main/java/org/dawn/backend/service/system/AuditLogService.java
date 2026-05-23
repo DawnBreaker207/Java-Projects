@@ -10,12 +10,14 @@ import org.dawn.backend.dto.system.AuditLogResponse;
 import org.dawn.backend.entity.AuditLog;
 import org.dawn.backend.dto.system.AuditLogMappingHelper;
 import org.dawn.backend.repository.system.AuditLogRepository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RequiredArgsConstructor
 @Slf4j
+@Service
 public class AuditLogService {
 
     private final AuditLogRepository auditLogRepository;
