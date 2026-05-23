@@ -17,7 +17,7 @@ export const auditLogApi = createApi({
   endpoints: (builder) => ({
     getAuditLogs: builder.query<AuditLog[], AuditLogParams>({
       query: ({ page = 0, size = 20, ...rest } = {}) => ({
-        url: '/logs/',
+        url: '/logs',
         method: 'GET',
         params: { page, size, ...rest }
       }),

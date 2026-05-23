@@ -8,7 +8,7 @@ export const warrantyApi = createApi({
   tagTypes: ['Warranty'],
   endpoints: (builder) => ({
     getWarranties: builder.query<WarrantyResponse[], void>({
-      query: () => ({ url: '/warranty/', method: 'GET' }),
+      query: () => ({ url: '/warranty', method: 'GET' }),
       providesTags: ['Warranty'],
     }),
     getWarranty: builder.query<WarrantyResponse, number>({
