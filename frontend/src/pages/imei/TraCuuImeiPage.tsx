@@ -34,6 +34,7 @@ interface TraceResult {
       rowNum: string
       shelfNum: string
       binNum: string
+      capacity: number
     }
   }
   saleInfo?: {
