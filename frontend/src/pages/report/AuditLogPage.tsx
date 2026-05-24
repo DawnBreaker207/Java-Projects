@@ -152,7 +152,7 @@ const AuditLogPage = () => {
 
       <Card style={{ borderRadius: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
         <Table
-          dataSource={response}
+          dataSource={response?.content}
           columns={columns}
           loading={isLoading || isFetching}
           rowKey='id'
