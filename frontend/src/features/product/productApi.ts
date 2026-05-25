@@ -8,7 +8,7 @@ export const productApi = createApi({
   tagTypes: ['Product'],
   endpoints: (builder) => ({
     getProducts: builder.query<Product[], void>({
-      query: () => ({ url: '/product/', method: 'GET' }),
+      query: () => ({ url: '/product', method: 'GET' }),
       providesTags: ['Product'],
     }),
     getProduct: builder.query<Product, number>({
@@ -16,7 +16,7 @@ export const productApi = createApi({
       providesTags: ['Product'],
     }),
     createProduct: builder.mutation<Product, ProductRequest>({
-      query: (data) => ({ url: '/product/', method: 'POST', data }),
+      query: (data) => ({ url: '/product', method: 'POST', data }),
       invalidatesTags: ['Product'],
     }),
     updateProduct: builder.mutation<Product, { id: number; data: ProductRequest }>({

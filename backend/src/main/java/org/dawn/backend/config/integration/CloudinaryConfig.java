@@ -1,27 +1,31 @@
 package org.dawn.backend.config.integration;
 
 import com.cloudinary.Cloudinary;
-import org.dawn.backend.config.web.AppConfig;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Configuration
 public class CloudinaryConfig {
 
-    private static Cloudinary instance;
+    @Value("${cloudinary.cloudName}")
+    private String cloudName;
 
-    public static Cloudinary getConfig() {
-    if( instance == null){
-        String cloudName = AppConfig.get("cloudinary.cloudName");
-        String apiKey = AppConfig.get("cloudinary.apiKey");
-        String apiSecret = AppConfig.get("cloudinary.apiSecret");
+    @Value("${cloudinary.apiKey}")
+    private String apiKey;
+
+    @Value("${cloudinary.apiSecret}")
+    private String apiSecret;
+
+    @Bean
+    public Cloudinary config() {
         Map<String, String> config = new HashMap<>();
         config.put("cloud_name", cloudName);
         config.put("api_key", apiKey);
         config.put("api_secret", apiSecret);
-        instance = new Cloudinary(config);
-    }
-    return instance;
+        return new Cloudinary(config);
     }
 }

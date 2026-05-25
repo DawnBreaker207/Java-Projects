@@ -7,11 +7,13 @@ import org.dawn.backend.dto.sales.CustomerResponse;
 import org.dawn.backend.entity.Customer;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.repository.sales.CustomerRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
+@Service
 public class CustomerService {
 
     private final CustomerRepository customerRepository;

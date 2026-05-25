@@ -9,7 +9,7 @@ export const userApi = createApi({
   endpoints: (builder) => ({
     getUsers: builder.query<ResponsePage<User>, { page?: number; size?: number }>({
       query: ({ page = 0, size = 20 } = {}) => ({
-        url: '/user/',
+        url: '/user',
         method: 'GET',
         params: { page, size },
       }),
@@ -20,7 +20,7 @@ export const userApi = createApi({
       providesTags: ['User'],
     }),
     createUser: builder.mutation<CreatedUser, RegisterRequest>({
-      query: (data) => ({ url: '/user/', method: 'POST', data }),
+      query: (data) => ({ url: '/user', method: 'POST', data }),
       invalidatesTags: ['User'],
     }),
     updateUserInfo: builder.mutation<User, { id: number; data: UpdateInfoRequest }>({

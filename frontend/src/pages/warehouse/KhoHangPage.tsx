@@ -111,9 +111,9 @@ const KhoHangPage = () => {
     return { label: t('common:status.product.inStock'), color: 'green' }
   }
 
-  const { data: allLogs = [] } = useGetAuditLogsQuery({ page: 0, size: 100 })
+  const { data: allLogs } = useGetAuditLogsQuery({ page: 0, size: 100 })
   const drawerLogs = useMemo(
-    () => (drawerItem ? allLogs.filter((l) => l.entityId === String(drawerItem.id)) : []),
+    () => (drawerItem ? (allLogs?.content ?? []).filter((l) => l.entityId === String(drawerItem.id)) : []),
     [allLogs, drawerItem]
   )
 
@@ -156,7 +156,14 @@ const KhoHangPage = () => {
   const openAdd = () => {
     setEditItem(null)
     form.resetFields()
-    form.setFieldsValue({ status: 'ACTIVE', hasImei: false, minThreshold: 10, warrantyPeriod: 12, currentStock: 0, imageUrl: '' })
+    form.setFieldsValue({
+      status: 'ACTIVE',
+      hasImei: false,
+      minThreshold: 10,
+      warrantyPeriod: 12,
+      currentStock: 0,
+      imageUrl: ''
+    })
     setFileList([])
     setModalOpen(true)
   }
@@ -202,7 +209,9 @@ const KhoHangPage = () => {
   const handleSoftDelete = (r: Product) => {
     modal.confirm({
       title: r.isDeleted ? t('softDelete.titleRestore') : t('softDelete.titleHide'),
-      content: r.isDeleted ? t('softDelete.contentRestore', { name: r.name }) : t('softDelete.contentHide', { name: r.name }),
+      content: r.isDeleted
+        ? t('softDelete.contentRestore', { name: r.name })
+        : t('softDelete.contentHide', { name: r.name }),
       okText: r.isDeleted ? t('common:button.restore') : t('common:button.hide'),
       okButtonProps: { danger: !r.isDeleted },
       cancelText: t('common:button.cancel'),
@@ -238,7 +247,11 @@ const KhoHangPage = () => {
           status: newStatus
         }
       }).unwrap()
-      void message.success(t('toggleStatus.success', { action: newStatus === 'ACTIVE' ? t('toggleStatus.activate') : t('toggleStatus.deactivate') }))
+      void message.success(
+        t('toggleStatus.success', {
+          action: newStatus === 'ACTIVE' ? t('toggleStatus.activate') : t('toggleStatus.deactivate')
+        })
+      )
     } catch (err: unknown) {
       const e = err as { data?: { message?: string } }
       void message.error(e?.data?.message ?? t('common:error.system'))
@@ -247,9 +260,15 @@ const KhoHangPage = () => {
 
   const handleExportCSV = () => {
     const header = [
-      t('csv.headerId'), t('csv.headerSku'), t('csv.headerName'), t('csv.headerCategory'),
-      t('csv.headerPriceImport'), t('csv.headerPriceExport'), t('csv.headerStock'),
-      t('csv.headerThreshold'), t('csv.headerStatus')
+      t('csv.headerId'),
+      t('csv.headerSku'),
+      t('csv.headerName'),
+      t('csv.headerCategory'),
+      t('csv.headerPriceImport'),
+      t('csv.headerPriceExport'),
+      t('csv.headerStock'),
+      t('csv.headerThreshold'),
+      t('csv.headerStatus')
     ]
     const rows = filtered.map((p) => [
       p.id,
@@ -282,7 +301,9 @@ const KhoHangPage = () => {
         <Space>
           <div>
             <div style={{ fontWeight: 600, fontSize: 13 }}>{r.name}</div>
-            <Text type='secondary' style={{ fontSize: 12 }}>{r.sku}</Text>
+            <Text type='secondary' style={{ fontSize: 12 }}>
+              {r.sku}
+            </Text>
           </div>
         </Space>
       )
@@ -357,18 +378,23 @@ const KhoHangPage = () => {
       dataIndex: 'hasImei',
       key: 'hasImei',
       width: 65,
-      render: (v: boolean) => (v ? <Tag color='blue'>{t('common:common.yes')}</Tag> : <Tag>{t('common:common.no')}</Tag>)
+      render: (v: boolean) =>
+        v ? <Tag color='blue'>{t('common:common.yes')}</Tag> : <Tag>{t('common:common.no')}</Tag>
     },
-    ...(canUpdate ? [{
-      title: t('col.active'),
-      key: 'active',
-      width: 90,
-      render: (_: unknown, r: Product) => (
-        <Tooltip title={r.status === 'ACTIVE' ? t('tooltip.deactivate') : t('tooltip.activate')}>
-          <Switch size='small' checked={r.status === 'ACTIVE'} onChange={() => handleToggleStatus(r)} />
-        </Tooltip>
-      )
-    }] : []),
+    ...(canUpdate
+      ? [
+        {
+          title: t('col.active'),
+          key: 'active',
+          width: 90,
+          render: (_: unknown, r: Product) => (
+            <Tooltip title={r.status === 'ACTIVE' ? t('tooltip.deactivate') : t('tooltip.activate')}>
+              <Switch size='small' checked={r.status === 'ACTIVE'} onChange={() => handleToggleStatus(r)} />
+            </Tooltip>
+          )
+        }
+      ]
+      : []),
     {
       title: t('col.actions'),
       key: 'action',
@@ -402,7 +428,13 @@ const KhoHangPage = () => {
               <Button
                 type='text'
                 size='small'
-                icon={record.isDeleted ? <UndoOutlined style={{ color: '#52c41a' }} /> : <DeleteOutlined style={{ color: '#ff4d4f' }} />}
+                icon={
+                  record.isDeleted ? (
+                    <UndoOutlined style={{ color: '#52c41a' }} />
+                  ) : (
+                    <DeleteOutlined style={{ color: '#ff4d4f' }} />
+                  )
+                }
                 onClick={() => handleSoftDelete(record)}
               />
             </Tooltip>
@@ -418,23 +450,61 @@ const KhoHangPage = () => {
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         {[
-          { title: t('stats.totalProducts'), value: stats.total, icon: <ShoppingOutlined />, color: PRIMARY, sub: t('stats.totalProductsSub') },
-          { title: t('stats.lowStock'), value: stats.lowStock, icon: <WarningOutlined />, color: '#faad14', sub: t('stats.lowStockSub') },
-          { title: t('stats.outOfStock'), value: stats.outOfStock, icon: <ImportOutlined />, color: '#ff4d4f', sub: t('stats.outOfStockSub') },
-          { title: t('stats.active'), value: stats.active, icon: <ExportOutlined />, color: '#52c41a', sub: t('stats.activeSub') }
+          {
+            title: t('stats.totalProducts'),
+            value: stats.total,
+            icon: <ShoppingOutlined />,
+            color: PRIMARY,
+            sub: t('stats.totalProductsSub')
+          },
+          {
+            title: t('stats.lowStock'),
+            value: stats.lowStock,
+            icon: <WarningOutlined />,
+            color: '#faad14',
+            sub: t('stats.lowStockSub')
+          },
+          {
+            title: t('stats.outOfStock'),
+            value: stats.outOfStock,
+            icon: <ImportOutlined />,
+            color: '#ff4d4f',
+            sub: t('stats.outOfStockSub')
+          },
+          {
+            title: t('stats.active'),
+            value: stats.active,
+            icon: <ExportOutlined />,
+            color: '#52c41a',
+            sub: t('stats.activeSub')
+          }
         ].map((card, idx) => (
           <Col xs={24} sm={12} xl={6} key={idx}>
             <Card style={{ borderRadius: 12, boxShadow: '0 2px 10px rgba(0,0,0,0.07)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
-                  <Text type='secondary' style={{ fontSize: 13 }}>{card.title}</Text>
+                  <Text type='secondary' style={{ fontSize: 13 }}>
+                    {card.title}
+                  </Text>
                   <Statistic
                     value={card.value}
                     suffix={<span style={{ fontSize: 13, color: '#888' }}>{card.sub}</span>}
                     valueStyle={{ fontSize: 28, fontWeight: 700, color: card.color }}
                   />
                 </div>
-                <div style={{ width: 48, height: 48, borderRadius: 10, background: `${card.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, color: card.color }}>
+                <div
+                  style={{
+                    width: 48,
+                    height: 48,
+                    borderRadius: 10,
+                    background: `${card.color}18`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: 22,
+                    color: card.color
+                  }}
+                >
                   {card.icon}
                 </div>
               </div>
@@ -482,9 +552,13 @@ const KhoHangPage = () => {
             </Button>
           )}
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            <Button icon={<DownloadOutlined />} onClick={handleExportCSV}>{t('common:button.exportCsv')}</Button>
+            <Button icon={<DownloadOutlined />} onClick={handleExportCSV}>
+              {t('common:button.exportCsv')}
+            </Button>
             {canCreate && (
-              <Button type='primary' icon={<PlusOutlined />} onClick={openAdd}>{t('empty.action')}</Button>
+              <Button type='primary' icon={<PlusOutlined />} onClick={openAdd}>
+                {t('empty.action')}
+              </Button>
             )}
           </div>
         </div>
@@ -498,8 +572,19 @@ const KhoHangPage = () => {
           size='middle'
           bordered
           onRow={(r) => ({ style: r.currentStock === 0 ? { background: '#fff1f0' } : {} })}
-          pagination={{ pageSize: 10, showSizeChanger: true, showTotal: (total, rng) => t('table.totalSummary', { start: rng[0], end: rng[1], total }) }}
-          locale={{ emptyText: <EmptyState title={t('empty.title')} action={canCreate ? { label: t('empty.action'), onClick: openAdd } : undefined} /> }}
+          pagination={{
+            pageSize: 10,
+            showSizeChanger: true,
+            showTotal: (total, rng) => t('table.totalSummary', { start: rng[0], end: rng[1], total })
+          }}
+          locale={{
+            emptyText: (
+              <EmptyState
+                title={t('empty.title')}
+                action={canCreate ? { label: t('empty.action'), onClick: openAdd } : undefined}
+              />
+            )
+          }}
         />
       </Card>
 
@@ -512,7 +597,9 @@ const KhoHangPage = () => {
               </Avatar>
               <div>
                 <div style={{ fontWeight: 700 }}>{drawerItem.name}</div>
-                <Text type='secondary' style={{ fontSize: 12, fontWeight: 400 }}>{drawerItem.sku}</Text>
+                <Text type='secondary' style={{ fontSize: 12, fontWeight: 400 }}>
+                  {drawerItem.sku}
+                </Text>
               </div>
             </Space>
           )
@@ -543,22 +630,50 @@ const KhoHangPage = () => {
                 label: t('drawer.tabInfo'),
                 children: (
                   <>
-                    <div style={{ background: `${PRIMARY}10`, borderRadius: 10, padding: 16, marginBottom: 20, display: 'flex', gap: 24, flexWrap: 'wrap' }}>
-                      <Statistic title={t('drawer.stock')} value={drawerItem.currentStock}
-                        valueStyle={{ color: stockColor(drawerItem.currentStock, drawerItem.minThreshold), fontWeight: 700 }} />
-                      <Statistic title={t('drawer.priceImport')} value={drawerItem.priceImport}
-                        formatter={(v) => fmtCurrency(Number(v))} />
-                      <Statistic title={t('drawer.priceExport')} value={drawerItem.priceExport}
-                        formatter={(v) => fmtCurrency(Number(v))} />
-                      <Statistic title={t('drawer.margin')} value={drawerItem.priceExport - drawerItem.priceImport}
-                        formatter={(v) => fmtCurrency(Number(v))} valueStyle={{ color: '#52c41a' }} />
+                    <div
+                      style={{
+                        background: `${PRIMARY}10`,
+                        borderRadius: 10,
+                        padding: 16,
+                        marginBottom: 20,
+                        display: 'flex',
+                        gap: 24,
+                        flexWrap: 'wrap'
+                      }}
+                    >
+                      <Statistic
+                        title={t('drawer.stock')}
+                        value={drawerItem.currentStock}
+                        valueStyle={{
+                          color: stockColor(drawerItem.currentStock, drawerItem.minThreshold),
+                          fontWeight: 700
+                        }}
+                      />
+                      <Statistic
+                        title={t('drawer.priceImport')}
+                        value={drawerItem.priceImport}
+                        formatter={(v) => fmtCurrency(Number(v))}
+                      />
+                      <Statistic
+                        title={t('drawer.priceExport')}
+                        value={drawerItem.priceExport}
+                        formatter={(v) => fmtCurrency(Number(v))}
+                      />
+                      <Statistic
+                        title={t('drawer.margin')}
+                        value={drawerItem.priceExport - drawerItem.priceImport}
+                        formatter={(v) => fmtCurrency(Number(v))}
+                        valueStyle={{ color: '#52c41a' }}
+                      />
                     </div>
                     <Descriptions bordered column={2} size='small'>
                       <Descriptions.Item label={t('drawer.fieldSku')}>{drawerItem.sku}</Descriptions.Item>
                       <Descriptions.Item label={t('drawer.fieldCategory')}>
                         {catMap[drawerItem.categoryId] ?? `#${drawerItem.categoryId}`}
                       </Descriptions.Item>
-                      <Descriptions.Item label={t('drawer.fieldThreshold')}>{drawerItem.minThreshold}</Descriptions.Item>
+                      <Descriptions.Item label={t('drawer.fieldThreshold')}>
+                        {drawerItem.minThreshold}
+                      </Descriptions.Item>
                       <Descriptions.Item label={t('drawer.fieldWarranty')}>
                         {drawerItem.warrantyPeriod ?? '—'} {t('common:common.months')}
                       </Descriptions.Item>
@@ -627,7 +742,11 @@ const KhoHangPage = () => {
                         dataIndex: 'status',
                         key: 'status',
                         width: 90,
-                        render: (v: string) => <Tag color={v === 'SUCCESS' ? 'green' : 'red'}>{t(`common:status.log.${v}`, { defaultValue: v })}</Tag>
+                        render: (v: string) => (
+                          <Tag color={v === 'SUCCESS' ? 'green' : 'red'}>
+                            {t(`common:status.log.${v}`, { defaultValue: v })}
+                          </Tag>
+                        )
                       },
                       {
                         title: t('drawer.historyColTime'),
@@ -651,7 +770,9 @@ const KhoHangPage = () => {
         onCancel={() => setModalOpen(false)}
         width={700}
         footer={[
-          <Button key='cancel' onClick={() => setModalOpen(false)}>{t('common:button.cancel')}</Button>,
+          <Button key='cancel' onClick={() => setModalOpen(false)}>
+            {t('common:button.cancel')}
+          </Button>,
           <Button key='save' type='primary' loading={creating || updating} onClick={handleSave}>
             {editItem ? t('common:button.update') : t('common:button.create')}
           </Button>
@@ -660,20 +781,35 @@ const KhoHangPage = () => {
         <Form form={form} layout='vertical' style={{ marginTop: 16 }}>
           <Row gutter={16}>
             <Col span={16}>
-              <Form.Item label={t('modal.name')} name='name' rules={[{ required: true, message: t('modal.nameRequired') }]}>
+              <Form.Item
+                label={t('modal.name')}
+                name='name'
+                rules={[{ required: true, message: t('modal.nameRequired') }]}
+              >
                 <Input autoFocus placeholder={t('modal.namePlaceholder')} />
               </Form.Item>
             </Col>
             <Col span={8}>
-              <Form.Item label={t('modal.sku')} name='sku' rules={[{ required: true, message: t('modal.skuRequired') }]}>
+              <Form.Item
+                label={t('modal.sku')}
+                name='sku'
+                rules={[{ required: true, message: t('modal.skuRequired') }]}
+              >
                 <Input disabled={!!editItem} placeholder={t('modal.skuPlaceholder')} />
               </Form.Item>
             </Col>
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={t('modal.category')} name='categoryId' rules={[{ required: true, message: t('modal.categoryRequired') }]}>
-                <Select placeholder={t('modal.categoryPlaceholder')} options={categories.map((c) => ({ value: c.id, label: c.name }))} />
+              <Form.Item
+                label={t('modal.category')}
+                name='categoryId'
+                rules={[{ required: true, message: t('modal.categoryRequired') }]}
+              >
+                <Select
+                  placeholder={t('modal.categoryPlaceholder')}
+                  options={categories.map((c) => ({ value: c.id, label: c.name }))}
+                />
               </Form.Item>
             </Col>
             <Col span={12}>
@@ -689,7 +825,11 @@ const KhoHangPage = () => {
           </Row>
           <Row gutter={16}>
             <Col span={12}>
-              <Form.Item label={t('modal.priceImport')} name='priceImport' rules={[{ required: true, message: t('modal.priceImportRequired') }]}>
+              <Form.Item
+                label={t('modal.priceImport')}
+                name='priceImport'
+                rules={[{ required: true, message: t('modal.priceImportRequired') }]}
+              >
                 <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
@@ -701,7 +841,11 @@ const KhoHangPage = () => {
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item label={t('modal.priceExport')} name='priceExport' rules={[{ required: true, message: t('modal.priceExportRequired') }]}>
+              <Form.Item
+                label={t('modal.priceExport')}
+                name='priceExport'
+                rules={[{ required: true, message: t('modal.priceExportRequired') }]}
+              >
                 <InputNumber<number>
                   style={{ width: '100%' }}
                   min={0}
@@ -778,14 +922,16 @@ const KhoHangPage = () => {
                 try {
                   const url = await uploadImage(formData).unwrap()
                   form.setFieldValue('imageUrl', url)
-                  setFileList([{
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    uid: (file as any).uid || '-1',
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    name: (file as any).name || 'image.png',
-                    status: 'done',
-                    url
-                  }])
+                  setFileList([
+                    {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      uid: (file as any).uid || '-1',
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      name: (file as any).name || 'image.png',
+                      status: 'done',
+                      url
+                    }
+                  ])
                   onSuccess?.('ok')
                   void message.success(t('modal.uploadSuccess'))
                 } catch (err) {

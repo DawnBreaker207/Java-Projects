@@ -1,7 +1,9 @@
 package org.dawn.backend.repository.warehouse;
 
 import org.dawn.backend.entity.InventorySession;
-import org.dawn.backend.repository.base.BaseRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface InventorySessionRepository extends BaseRepository<InventorySession, Long> {
+@Repository
+public interface InventorySessionRepository extends JpaRepository<InventorySession, Long> {
 }

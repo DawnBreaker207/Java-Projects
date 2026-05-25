@@ -9,7 +9,7 @@ export const orderApi = createApi({
   endpoints: (builder) => ({
     getOrders: builder.query<ResponsePage<OrderResponse>, { page?: number; size?: number; status?: string }>({
       query: ({ page = 0, size = 20, status } = {}) => ({
-        url: '/order/',
+        url: '/order',
         method: 'GET',
         params: { page, size, ...(status ? { status } : {}) }
       }),

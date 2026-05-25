@@ -1,6 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { axiosBaseQuery } from '@/config/axiosBaseQuery'
 import type { AuditLog } from '@/types/api'
+import type { ResponsePage } from '@/types/common'
 
 export interface AuditLogParams {
   userId?: string
@@ -15,12 +16,13 @@ export const auditLogApi = createApi({
   baseQuery: axiosBaseQuery(),
   tagTypes: ['AuditLog'],
   endpoints: (builder) => ({
-    getAuditLogs: builder.query<AuditLog[], AuditLogParams>({
+    getAuditLogs: builder.query<ResponsePage<AuditLog>, AuditLogParams>({
       query: ({ page = 0, size = 20, ...rest } = {}) => ({
-        url: '/logs/',
+        url: '/logs',
         method: 'GET',
         params: { page, size, ...rest }
       }),
+      transformResponse: (response: ResponsePage<AuditLog>) => response,
       providesTags: ['AuditLog']
     })
   })

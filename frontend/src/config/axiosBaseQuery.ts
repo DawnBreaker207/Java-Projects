@@ -1,6 +1,7 @@
 import type { BaseQueryFn } from '@reduxjs/toolkit/query'
 import type { AxiosError, AxiosRequestConfig } from 'axios'
 import axiosInstance from './axios'
+import type { ApiRes } from '@/types/common'
 
 interface AxiosBaseQueryArgs {
   url: string
@@ -35,7 +36,8 @@ export const axiosBaseQuery =
       }
 
       const result = await axiosInstance(config)
-      return { data: result.data.data ?? result.data }
+      const apiRes = result.data as ApiRes<unknown>
+      return { data: apiRes.data ?? result.data }
     } catch (axiosError) {
       const err = axiosError as AxiosError<{ message?: string }>
       return {

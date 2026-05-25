@@ -3,41 +3,49 @@ package org.dawn.backend.service.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.dawn.backend.config.database.TransactionManager;
-import org.dawn.backend.config.security.hashing.PasswordEncoder;
-import org.dawn.backend.config.web.AppConfig;
+import org.dawn.backend.config.web.Loggable;
 import org.dawn.backend.constant.system.LogConstant;
 import org.dawn.backend.constant.system.Message;
 import org.dawn.backend.dto.auth.*;
 import org.dawn.backend.entity.PasswordResetToken;
 import org.dawn.backend.entity.RefreshToken;
 import org.dawn.backend.entity.User;
+import org.dawn.backend.exception.ApiException;
 import org.dawn.backend.exception.wrapper.PermissionDeniedException;
 import org.dawn.backend.exception.wrapper.ResourceNotFoundException;
 import org.dawn.backend.repository.auth.PasswordResetTokenRepository;
 import org.dawn.backend.repository.auth.UserRepository;
-import org.dawn.backend.service.system.AuditLogService;
 import org.dawn.backend.service.system.MailService;
 import org.dawn.backend.utils.JWTUtils;
 import org.dawn.backend.utils.UserUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
 
+    @Value("${app.frontendUrl}")
+    String frontendUrl;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JWTUtils jwtUtils;
     private final RefreshTokenService refreshTokenService;
-    private final AuditLogService auditLogService;
-    private final TransactionManager manager;
     private final PasswordResetTokenRepository passwordResetTokenRepository;
     private final MailService mailService;
 
+    @Loggable(
+            action = LogConstant.Action.LOGIN,
+            entity = LogConstant.Entity.AUTH,
+            entityId = "#result.userId",
+            message = "'User login to system'"
+    )
     public JwtResponse login(LoginRequest req) {
 
         String identifier = req.getUsername();
@@ -62,15 +70,6 @@ public class AuthService {
                 user.getRole().getName().name());
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
-
-        auditLogService.saveLog(
-                user.getId(),
-                LogConstant.Action.LOGIN,
-                LogConstant.Entity.AUTH,
-                user.getId().toString(),
-                LogConstant.Status.SUCCESS,
-                "User login to system");
-
         return JwtResponse
                 .builder()
                 .userId(user.getId())
@@ -81,7 +80,11 @@ public class AuthService {
                 .build();
     }
 
-
+    @Loggable(
+            action = LogConstant.Action.RESET_PASSWORD,
+            entity = LogConstant.Entity.AUTH,
+            message = "'User reset password'"
+    )
     public String resetPassword(Long id, String username) {
         User user = userRepository
                 .findById(id)
@@ -93,15 +96,14 @@ public class AuthService {
         userRepository.save(user);
 
         refreshTokenService.deleteByUserId(id);
-        auditLogService.saveLog(
-                LogConstant.Action.RESET_PASSWORD,
-                LogConstant.Entity.AUTH,
-                user.getId().toString(),
-                LogConstant.Status.SUCCESS,
-                "User reset password");
         return tempPwd;
     }
 
+    @Loggable(
+            action = LogConstant.Action.CHANGE_PASSWORD,
+            entity = LogConstant.Entity.AUTH,
+            message = "'User change password'"
+    )
     public String changePassword(String username, ChangePasswordRequest request) {
         log.info("Get username from change password: {}", username);
         User user = userRepository
@@ -112,27 +114,25 @@ public class AuthService {
         }
 
         if (!request.getNewPassword().equals(request.getConfirmPassword())) {
-            throw new RuntimeException(Message.Exception.PASSWORD_NOT_MATCH);
+            throw new ApiException(Message.Exception.PASSWORD_NOT_MATCH);
         }
 
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
 
         user.setIsPasswordReset(false);
         userRepository.save(user);
-        auditLogService.saveLog(
-                LogConstant.Action.CHANGE_PASSWORD,
-                LogConstant.Entity.AUTH,
-                user.getId().toString(),
-                LogConstant.Status.SUCCESS,
-                "User change password");
         return "Change password success";
     }
 
-
+    @Loggable(
+            action = LogConstant.Action.RESET_PASSWORD,
+            entity = LogConstant.Entity.AUTH,
+            message = "'Forgot password email sent'"
+    )
     public String forgotPassword(ForgotPasswordRequest req) {
         String email = req.getEmail();
         if (email == null || email.isBlank()) {
-            throw new RuntimeException(Message.Exception.EMAIL_NOT_EMPTY);
+            throw new ApiException(Message.Exception.EMAIL_NOT_EMPTY);
         }
 
         User user = userRepository
@@ -149,32 +149,28 @@ public class AuthService {
                 .expiryDate(expiry)
                 .build());
 
-        String frontendUrl = AppConfig.get("app.frontendUrl");
+
         if (frontendUrl == null || frontendUrl.isBlank()) frontendUrl = "http://localhost:5173";
         String resetLink = frontendUrl + "/reset-password?token=" + token;
 
         mailService.sendPasswordResetMail(email.trim(), user.getFullName(), resetLink);
-
-        auditLogService.saveLog(
-                user.getId(),
-                LogConstant.Action.RESET_PASSWORD,
-                LogConstant.Entity.AUTH,
-                user.getId().toString(),
-                LogConstant.Status.SUCCESS,
-                "Forgot password email sent");
-
         return "Email đặt lại mật khẩu đã được gửi";
     }
 
+    @Loggable(
+            action = LogConstant.Action.CHANGE_PASSWORD,
+            entity = LogConstant.Entity.AUTH,
+            message = "'Password reset via token'"
+    )
     public String resetPasswordByToken(ResetPasswordTokenRequest req) {
         if (req.getToken() == null || req.getToken().isBlank()) {
-            throw new RuntimeException(Message.Exception.INVALID_TOKEN);
+            throw new ApiException(Message.Exception.INVALID_TOKEN);
         }
         if (!req.getNewPassword().equals(req.getConfirmPassword())) {
-            throw new RuntimeException(Message.Exception.PASSWORD_NOT_MATCH);
+            throw new ApiException(Message.Exception.PASSWORD_NOT_MATCH);
         }
         if (req.getNewPassword().length() < 6) {
-            throw new RuntimeException(Message.Exception.PASSWORD_TOO_SHORT);
+            throw new ApiException(Message.Exception.PASSWORD_TOO_SHORT);
         }
 
         PasswordResetToken resetToken = passwordResetTokenRepository
@@ -182,10 +178,10 @@ public class AuthService {
                 .orElseThrow(() -> new ResourceNotFoundException(Message.Exception.TOKEN_INVALID_OR_EXPIRED));
 
         if (Boolean.TRUE.equals(resetToken.getUsed())) {
-            throw new RuntimeException(Message.Exception.TOKEN_USED);
+            throw new ApiException(Message.Exception.TOKEN_USED);
         }
         if (resetToken.getExpiryDate().isBefore(Instant.now())) {
-            throw new RuntimeException(Message.Exception.TOKEN_EXPIRED);
+            throw new ApiException(Message.Exception.TOKEN_EXPIRED);
         }
 
         User user = userRepository
@@ -198,15 +194,6 @@ public class AuthService {
 
         passwordResetTokenRepository.markUsed(resetToken.getId());
         refreshTokenService.deleteByUserId(user.getId());
-
-        auditLogService.saveLog(
-                user.getId(),
-                LogConstant.Action.CHANGE_PASSWORD,
-                LogConstant.Entity.AUTH,
-                user.getId().toString(),
-                LogConstant.Status.SUCCESS,
-                "Password reset via token");
-
         return "Đặt lại mật khẩu thành công";
     }
 

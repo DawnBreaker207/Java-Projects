@@ -8,7 +8,7 @@ export const supplierApi = createApi({
   tagTypes: ['Supplier'],
   endpoints: (builder) => ({
     getSuppliers: builder.query<Supplier[], void>({
-      query: () => ({ url: '/supplier/', method: 'GET' }),
+      query: () => ({ url: '/supplier', method: 'GET' }),
       providesTags: ['Supplier'],
     }),
     getSupplier: builder.query<Supplier, number>({
@@ -16,7 +16,7 @@ export const supplierApi = createApi({
       providesTags: ['Supplier'],
     }),
     createSupplier: builder.mutation<Supplier, SupplierRequest>({
-      query: (data) => ({ url: '/supplier/', method: 'POST', data }),
+      query: (data) => ({ url: '/supplier', method: 'POST', data }),
       invalidatesTags: ['Supplier'],
     }),
     updateSupplier: builder.mutation<Supplier, { id: number; data: SupplierUpdateRequest }>({
