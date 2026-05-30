@@ -28,7 +28,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 1.5G
+          memory: 2G
   server:
     container_name: backend
     image: backend:latest
