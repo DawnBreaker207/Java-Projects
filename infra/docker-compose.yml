@@ -11,22 +11,24 @@ services:
       ORACLE_PASSWORD: ${ORACLE_PASSWORD}
       APP_USER: ${DB_USER}
       APP_USER_PASSWORD: ${DB_PASS}
+      ORACLE_SGA: 600
+      ORACLE_PGA: 300
     ports:
-      - '1522:1521'
+      - '1521:1521'
     networks:
       - base-net
     volumes:
       - oracle-data:/opt/oracle/oradata
     healthcheck:
       test: ['CMD-SHELL', 'healthcheck.sh']
-      interval: 15s
-      timeout: 5s
+      interval: 20s
+      timeout: 10s
       retries: 15
-      start_period: 60s
+      start_period: 90s
     deploy:
       resources:
         limits:
-          memory: 2G
+          memory: 1.2G
   server:
     container_name: backend
     image: backend:latest
@@ -75,8 +77,11 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    restart:
-      always
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 400M
       # Client
   client:
     container_name: frontend
